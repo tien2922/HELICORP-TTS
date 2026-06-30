@@ -81,7 +81,7 @@ export default function Navbar() {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/images.png"
+              src="/logo12.png"
               alt="Apple Logo"
               style={{
                 width: 22,
