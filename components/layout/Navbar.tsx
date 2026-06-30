@@ -6,14 +6,14 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 import { Moon, Sun, Menu, X } from "lucide-react";
 
 const navLinks = [
-  { label: "Thiết kế", href: "#design" },
-  { label: "Spatial Audio", href: "#audio" },
-  { label: "Pin", href: "#battery" },
-  { label: "Thông số", href: "#specs" },
-  { label: "Liên hệ", href: "#contact" },
+  { label: "Design", href: "#design" },
+  { label: "Audio", href: "#audio" },
+  { label: "Experience", href: "#experience" },
+  { label: "Environment", href: "#specs" },
+  { label: "Contact", href: "#contact" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -191,6 +191,7 @@ export default function Navbar() {
 
               {/* CTA Button (desktop) */}
               <button 
+                onClick={onBuyClick}
                 className="btn-primary hidden md:flex" 
                 style={{ 
                   padding: "8px 18px", 
@@ -200,7 +201,7 @@ export default function Navbar() {
                   transition: "all 0.3s ease",
                 }}
               >
-                Mua ngay
+                Buy Now
               </button>
             </div>
 
@@ -282,10 +283,14 @@ export default function Navbar() {
                 </motion.button>
               ))}
               <button
+                onClick={() => {
+                  setMobileOpen(false);
+                  onBuyClick();
+                }}
                 className="btn-primary"
                 style={{ marginTop: 16, textAlign: "center", justifyContent: "center" }}
               >
-                Mua ngay
+                Buy Now
               </button>
             </nav>
           </motion.div>
