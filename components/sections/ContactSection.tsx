@@ -3,32 +3,34 @@ import { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { Send, CheckCircle, Loader2 } from "lucide-react";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 const WEBHOOK_URL = "https://httpbin.org/post"; // Replace with real webhook
 
-function validateEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+function validatePhone(phone: string) {
+  return /^[0-9+\s-]{8,15}$/.test(phone);
 }
 
 export default function ContactSection() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { theme } = useTheme();
 
-  const [form, setForm] = useState({ name: "", email: "" });
-  const [errors, setErrors] = useState({ name: "", email: "" });
+  const [form, setForm] = useState({ name: "", phone: "" });
+  const [errors, setErrors] = useState({ name: "", phone: "" });
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const validate = () => {
-    const newErrors = { name: "", email: "" };
-    if (!form.name.trim()) newErrors.name = "Vui lòng nhập tên của bạn";
+    const newErrors = { name: "", phone: "" };
+    if (!form.name.trim()) newErrors.name = "Please enter your name";
     else if (form.name.trim().length < 2)
-      newErrors.name = "Tên phải có ít nhất 2 ký tự";
-    if (!form.email.trim()) newErrors.email = "Vui lòng nhập email";
-    else if (!validateEmail(form.email))
-      newErrors.email = "Email không hợp lệ";
+      newErrors.name = "Name must be at least 2 characters";
+    if (!form.phone.trim()) newErrors.phone = "Please enter your phone number";
+    else if (!validatePhone(form.phone))
+      newErrors.phone = "Invalid phone number format";
     setErrors(newErrors);
-    return !newErrors.name && !newErrors.email;
+    return !newErrors.name && !newErrors.phone;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,17 +39,14 @@ export default function ContactSection() {
 
     setLoading(true);
 
-    // Track event
-    console.log("[Analytics] form_submit", { form });
-
     try {
       const res = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name,
-          email: form.email,
-          product: "AirPods 3",
+          phone: form.phone,
+          product: "AirPods Pro 3",
           source: "landing_page",
           timestamp: new Date().toISOString(),
         }),
@@ -56,10 +55,10 @@ export default function ContactSection() {
       if (!res.ok) throw new Error("Webhook error");
 
       setSubmitted(true);
-      toast.success("🎉 Đăng ký thành công! Chúng tôi sẽ liên hệ sớm.");
-      setForm({ name: "", email: "" });
+      toast.success("🎉 Successfully subscribed! We will contact you soon.");
+      setForm({ name: "", phone: "" });
     } catch {
-      toast.error("❌ Có lỗi xảy ra. Vui lòng thử lại sau.");
+      toast.error("❌ Something went wrong. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -70,13 +69,14 @@ export default function ContactSection() {
       id="contact"
       ref={ref}
       style={{
-        background: "var(--bg-secondary)",
+        background: "var(--bg-primary)",
         padding: "160px 0 120px",
         position: "relative",
         overflow: "hidden",
+        transition: "background-color 0.3s ease",
       }}
     >
-      {/* Background */}
+      {/* Background radial glow */}
       <div
         style={{
           position: "absolute",
@@ -86,7 +86,9 @@ export default function ContactSection() {
           width: 700,
           height: 700,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 70%)",
+          background: theme === "dark"
+            ? "radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 70%)"
+            : "radial-gradient(circle, rgba(0,0,0,0.02) 0%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
@@ -95,57 +97,75 @@ export default function ContactSection() {
         {/* Label */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
           style={{
             textAlign: "center",
             marginBottom: 16,
             fontSize: "0.7rem",
             letterSpacing: "0.2em",
             textTransform: "uppercase",
-            color: "var(--text-muted)",
+            color: theme === "dark" ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)",
             fontWeight: 600,
           }}
         >
-          06 • Đăng ký nhận tin
+          06 • Stay Updated
         </motion.div>
 
         <motion.h2
-          className="display-lg"
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          style={{ textAlign: "center", marginBottom: 16 }}
+          style={{
+            fontSize: "clamp(2.5rem, 6vw, 4.8rem)",
+            fontWeight: 800,
+            color: theme === "dark" ? "#ffffff" : "#000000",
+            lineHeight: 1.15,
+            letterSpacing: "-0.02em",
+            textAlign: "center",
+            marginBottom: 20,
+            transition: "color 0.3s ease",
+          }}
         >
-          <span className="gradient-text">Đừng bỏ lỡ</span>
-          <br />
-          <span className="gradient-text-blue">bất kỳ điều gì.</span>
+          Buy AirPods Pro 3
         </motion.h2>
 
         <motion.p
-          className="body-lg"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.2 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.15 }}
           style={{
+            fontSize: "0.95rem",
+            lineHeight: 1.6,
+            color: theme === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0, 0, 0, 0.6)",
             textAlign: "center",
-            maxWidth: 480,
+            maxWidth: 580,
             margin: "0 auto 60px",
+            transition: "color 0.3s ease",
           }}
         >
-          Đăng ký để nhận thông báo về giá ưu đãi, phụ kiện mới và các tips
-          sử dụng AirPods tốt nhất.
+          Now with the world’s best in‑ear Active Noise Cancellation, all‑new heart rate sensing, and up to 8 hours of battery life.
         </motion.p>
 
-        {/* Form Card */}
+        {/* Form Card (Glassmorphism layout) */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="glass-strong"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           style={{
             maxWidth: 520,
             margin: "0 auto",
-            padding: "48px 48px",
+            padding: "48px",
+            background: theme === "dark" ? "rgba(255, 255, 255, 0.02)" : "rgba(245, 245, 247, 0.65)",
+            border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(0, 0, 0, 0.04)",
+            borderRadius: 24,
+            boxShadow: theme === "dark"
+              ? "0 30px 60px rgba(0, 0, 0, 0.4)"
+              : "0 30px 60px rgba(0, 0, 0, 0.05)",
+            transition: "background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease",
           }}
         >
           <AnimatePresence mode="wait">
@@ -170,84 +190,89 @@ export default function ContactSection() {
                   style={{
                     fontSize: "1.4rem",
                     fontWeight: 700,
-                    color: "var(--text-primary)",
+                    color: theme === "dark" ? "#ffffff" : "#000000",
                     marginBottom: 10,
                   }}
                 >
-                  Cảm ơn bạn! 🎉
+                  Thank you! 🎉
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem" }}>
-                  Chúng tôi sẽ gửi thông tin mới nhất về AirPods 3 đến email của bạn.
+                <p style={{ color: theme === "dark" ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)", fontSize: "0.95rem" }}>
+                  We've added your phone number. Look forward to getting the latest news about AirPods Pro 3.
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
                   style={{
                     marginTop: 24,
                     background: "none",
-                    border: "1px solid var(--border-glass)",
-                    color: "var(--text-secondary)",
-                    padding: "8px 20px",
+                    border: theme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid rgba(0,0,0,0.1)",
+                    color: theme === "dark" ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.8)",
+                    padding: "10px 24px",
                     borderRadius: 100,
                     cursor: "pointer",
                     fontSize: "0.85rem",
+                    fontWeight: 600,
                     fontFamily: "var(--font)",
+                    transition: "all 0.25s",
                   }}
                 >
-                  Đăng ký thêm email khác
+                  Subscribe another number
                 </button>
               </motion.div>
             ) : (
               <motion.form
                 key="form"
                 onSubmit={handleSubmit}
-                style={{ display: "flex", flexDirection: "column", gap: 20 }}
+                style={{ display: "flex", flexDirection: "column", gap: 24 }}
               >
                 {/* Name field */}
                 <div>
                   <label
                     style={{
                       display: "block",
-                      fontSize: "0.78rem",
-                      fontWeight: 600,
-                      color: "var(--text-secondary)",
+                      fontSize: "0.75rem",
+                      fontWeight: 700,
+                      color: theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
                       marginBottom: 8,
                       letterSpacing: "0.06em",
                       textTransform: "uppercase",
                     }}
                   >
-                    Họ và tên
+                    Your Name
                   </label>
                   <input
                     type="text"
-                    value={form.name}
+                    value={form.name || ""}
+                    required
                     onChange={(e) => {
                       setForm((f) => ({ ...f, name: e.target.value }));
                       if (errors.name)
                         setErrors((err) => ({ ...err, name: "" }));
                     }}
-                    placeholder="Nguyễn Văn A"
+                    placeholder="Enter your name"
                     style={{
                       width: "100%",
-                      padding: "14px 16px",
-                      background: "rgba(255,255,255,0.04)",
+                      padding: "16px 20px",
+                      background: theme === "dark" ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)",
                       border: errors.name
                         ? "1px solid rgba(239,68,68,0.5)"
-                        : "1px solid var(--border-glass)",
-                      borderRadius: 12,
-                      color: "var(--text-primary)",
+                        : (theme === "dark" ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.08)"),
+                      borderRadius: 16,
+                      color: theme === "dark" ? "#ffffff" : "#000000",
                       fontSize: "0.95rem",
                       outline: "none",
                       fontFamily: "var(--font)",
-                      transition: "border-color 0.2s",
+                      transition: "border-color 0.25s ease, background-color 0.25s ease",
                     }}
-                    onFocus={(e) =>
-                      (e.target.style.borderColor = "rgba(59,130,246,0.5)")
-                    }
-                    onBlur={(e) =>
-                      (e.target.style.borderColor = errors.name
+                    onFocus={(e) => {
+                      e.target.style.borderColor = theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
+                      e.target.style.backgroundColor = theme === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = errors.name
                         ? "rgba(239,68,68,0.5)"
-                        : "var(--border-glass)")
-                    }
+                        : (theme === "dark" ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.08)");
+                      e.target.style.backgroundColor = theme === "dark" ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)";
+                    }}
                   />
                   <AnimatePresence>
                     {errors.name && (
@@ -267,55 +292,58 @@ export default function ContactSection() {
                   </AnimatePresence>
                 </div>
 
-                {/* Email field */}
+                {/* Phone field */}
                 <div>
                   <label
                     style={{
                       display: "block",
-                      fontSize: "0.78rem",
-                      fontWeight: 600,
-                      color: "var(--text-secondary)",
+                      fontSize: "0.75rem",
+                      fontWeight: 700,
+                      color: theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
                       marginBottom: 8,
                       letterSpacing: "0.06em",
                       textTransform: "uppercase",
                     }}
                   >
-                    Địa chỉ Email
+                    Phone Number
                   </label>
                   <input
-                    type="email"
-                    value={form.email}
+                    type="tel"
+                    value={form.phone || ""}
+                    required
                     onChange={(e) => {
-                      setForm((f) => ({ ...f, email: e.target.value }));
-                      if (errors.email)
-                        setErrors((err) => ({ ...err, email: "" }));
+                      setForm((f) => ({ ...f, phone: e.target.value }));
+                      if (errors.phone)
+                        setErrors((err) => ({ ...err, phone: "" }));
                     }}
-                    placeholder="example@email.com"
+                    placeholder="Enter your phone number"
                     style={{
                       width: "100%",
-                      padding: "14px 16px",
-                      background: "rgba(255,255,255,0.04)",
-                      border: errors.email
+                      padding: "16px 20px",
+                      background: theme === "dark" ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)",
+                      border: errors.phone
                         ? "1px solid rgba(239,68,68,0.5)"
-                        : "1px solid var(--border-glass)",
-                      borderRadius: 12,
-                      color: "var(--text-primary)",
+                        : (theme === "dark" ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.08)"),
+                      borderRadius: 16,
+                      color: theme === "dark" ? "#ffffff" : "#000000",
                       fontSize: "0.95rem",
                       outline: "none",
                       fontFamily: "var(--font)",
-                      transition: "border-color 0.2s",
+                      transition: "border-color 0.25s ease, background-color 0.25s ease",
                     }}
-                    onFocus={(e) =>
-                      (e.target.style.borderColor = "rgba(59,130,246,0.5)")
-                    }
-                    onBlur={(e) =>
-                      (e.target.style.borderColor = errors.email
+                    onFocus={(e) => {
+                      e.target.style.borderColor = theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
+                      e.target.style.backgroundColor = theme === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = errors.phone
                         ? "rgba(239,68,68,0.5)"
-                        : "var(--border-glass)")
-                    }
+                        : (theme === "dark" ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.08)");
+                      e.target.style.backgroundColor = theme === "dark" ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)";
+                    }}
                   />
                   <AnimatePresence>
-                    {errors.email && (
+                    {errors.phone && (
                       <motion.p
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
@@ -326,7 +354,7 @@ export default function ContactSection() {
                           marginTop: 6,
                         }}
                       >
-                        {errors.email}
+                        {errors.phone}
                       </motion.p>
                     )}
                   </AnimatePresence>
@@ -336,36 +364,49 @@ export default function ContactSection() {
                 <p
                   style={{
                     fontSize: "0.75rem",
-                    color: "var(--text-muted)",
+                    color: theme === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)",
                     lineHeight: 1.5,
                   }}
                 >
-                  Bằng cách đăng ký, bạn đồng ý nhận email marketing từ chúng tôi.
-                  Bạn có thể hủy đăng ký bất cứ lúc nào.
+                  By subscribing, you agree to receive promotional updates from us. You may unsubscribe at any time.
                 </p>
 
                 {/* Submit */}
                 <motion.button
                   type="submit"
-                  className="btn-primary"
                   disabled={loading}
                   whileHover={loading ? {} : { scale: 1.02 }}
                   whileTap={loading ? {} : { scale: 0.98 }}
                   style={{
+                    display: "flex",
+                    alignItems: "center",
                     justifyContent: "center",
-                    gap: 10,
+                    padding: "14px 28px",
+                    background: theme === "dark" ? "#ffffff" : "#000000",
+                    color: theme === "dark" ? "#000000" : "#ffffff",
+                    borderRadius: 100,
+                    border: "none",
+                    fontWeight: 600,
+                    fontSize: "0.95rem",
+                    cursor: "pointer",
+                    fontFamily: "var(--font)",
+                    boxShadow: theme === "dark"
+                      ? "0 10px 25px rgba(255, 255, 255, 0.1)"
+                      : "0 10px 25px rgba(0, 0, 0, 0.1)",
                     opacity: loading ? 0.7 : 1,
+                    gap: 10,
+                    transition: "background-color 0.3s ease, color 0.3s ease, opacity 0.3s ease",
                   }}
                 >
                   {loading ? (
                     <>
                       <Loader2 size={18} style={{ animation: "rotate-slow 1s linear infinite" }} />
-                      Đang gửi...
+                      Sending...
                     </>
                   ) : (
                     <>
                       <Send size={18} />
-                      Đăng ký nhận tin
+                      Subscribe Now
                     </>
                   )}
                 </motion.button>
@@ -377,14 +418,15 @@ export default function ContactSection() {
         {/* Social proof */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.8 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6 }}
           style={{ textAlign: "center", marginTop: 40 }}
         >
-          <p style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
-            ✓ Đã có{" "}
-            <strong style={{ color: "var(--text-secondary)" }}>12,400+</strong>{" "}
-            người đăng ký • Không spam • Hủy bất cứ lúc nào
+          <p style={{ fontSize: "0.8rem", color: theme === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)" }}>
+            ✓ Join over{" "}
+            <strong style={{ color: theme === "dark" ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.8)" }}>12,400+</strong>{" "}
+            subscribers • No spam • Unsubscribe anytime
           </p>
         </motion.div>
       </div>

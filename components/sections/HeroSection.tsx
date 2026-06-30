@@ -4,7 +4,7 @@ import { useRef, useState, useCallback } from "react";
 import { Pause, Play } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
-export default function HeroSection() {
+export default function HeroSection({ onBuyClick }: { onBuyClick: () => void }) {
   const [isPlaying, setIsPlaying] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { theme } = useTheme();
@@ -244,6 +244,7 @@ export default function HeroSection() {
             }}
           >
             <motion.button
+              onClick={onBuyClick}
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               style={{
