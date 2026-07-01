@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "@/components/providers/ThemeProvider";
@@ -34,12 +34,23 @@ const panels = [
 export default function DesignSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 991);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
 
-  // Smooth layout transforms for the card and image based on scroll progress
+  // Smooth layout transforms for the card and image based on scroll progress (Desktop only)
   const cardRotateY = useTransform(scrollYProgress, [0, 0.5, 1], [-12, 0, 12]);
   const cardRotateX = useTransform(scrollYProgress, [0, 0.5, 1], [15, 8, -5]);
   const cardScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 1.05]);
@@ -47,9 +58,182 @@ export default function DesignSection() {
   const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.85, 1.05, 0.9]);
   const imageY = useTransform(scrollYProgress, [0, 0.5, 1], [-20, 0, 30]);
 
-  // Transform for active hotspot dot animation
-  const activeIndex = useTransform(scrollYProgress, [0, 0.33, 0.66, 1], [0, 0, 1, 2]);
+  // Mobile Render Flow (Clean, Stacked, Non-Sticky, Zero-Overlap)
+  if (isMobile) {
+    return (
+      <section
+        id="design"
+        style={{
+          background: "var(--bg-primary)",
+          padding: "80px 24px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 60,
+        }}
+      >
+        {/* Section Title */}
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          <div
+            style={{
+              fontSize: "0.7rem",
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "var(--text-muted)",
+              fontWeight: 600,
+            }}
+          >
+            02 • Design & Comfort
+          </div>
+        </div>
 
+        {panels.map((panel, i) => (
+          <div
+            key={panel.tag}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 32,
+              borderBottom: i !== panels.length - 1 ? "1px solid var(--border-glass)" : "none",
+              paddingBottom: i !== panels.length - 1 ? 60 : 0,
+            }}
+          >
+            {/* Text details */}
+            <div>
+              <div style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    padding: "4px 12px",
+                    borderRadius: 100,
+                    background: theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+                    border: theme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <span style={{ fontSize: "0.68rem", fontWeight: 700, color: theme === "dark" ? "#ffffff" : "#000000", textTransform: "uppercase" }}>
+                    {panel.tag}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "4px 12px",
+                    borderRadius: 100,
+                    background: theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+                    border: theme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <div style={{ width: 5, height: 5, borderRadius: "50%", background: theme === "dark" ? "#ffffff" : "#000000" }} />
+                  <span style={{ fontSize: "0.68rem", fontWeight: 700, color: theme === "dark" ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.8)", textTransform: "uppercase" }}>
+                    {panel.highlight}
+                  </span>
+                </div>
+              </div>
+
+              <h3
+                style={{
+                  fontSize: "1.8rem",
+                  fontWeight: 800,
+                  lineHeight: 1.25,
+                  marginBottom: 16,
+                  color: theme === "dark" ? "#ffffff" : "#000000",
+                }}
+              >
+                {panel.title.replace("\n", " ")}
+              </h3>
+
+              <p
+                style={{
+                  fontSize: "0.92rem",
+                  lineHeight: 1.55,
+                  color: theme === "dark" ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)",
+                  marginBottom: 0,
+                }}
+              >
+                {panel.description}
+              </p>
+            </div>
+
+            {/* 3D-styled Static Card */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  maxWidth: 340,
+                  height: 380,
+                  borderRadius: 24,
+                  background: "rgba(255, 255, 255, 0.85)",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  border: "1px solid rgba(255, 255, 255, 0.4)",
+                  boxShadow: theme === "dark" 
+                    ? "0 20px 50px rgba(0, 0, 0, 0.4)"
+                    : "0 20px 50px rgba(0, 0, 0, 0.1)",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  overflow: "hidden",
+                }}
+              >
+                <div style={{ position: "relative", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  <Image
+                    src="/airpods-side1.webp"
+                    alt="AirPods 3 premium design"
+                    width={240}
+                    height={240}
+                    style={{ objectFit: "contain", filter: "drop-shadow(0 20px 30px rgba(0,0,0,0.3))" }}
+                  />
+
+                  {/* Hotspot indicator (Static for mobile) */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: panel.hotspot.x,
+                      top: panel.hotspot.y,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                    }}
+                  >
+                    <div style={{ position: "relative", width: 12, height: 12 }}>
+                      <div style={{ position: "absolute", width: "100%", height: "100%", borderRadius: "50%", background: "#3b82f6", animation: "pulse-glow 1.5s infinite" }} />
+                      <div style={{ position: "absolute", top: 3, left: 3, width: 6, height: 6, borderRadius: "50%", background: "#ffffff" }} />
+                    </div>
+                    <div
+                      style={{
+                        padding: "4px 10px",
+                        fontSize: "0.68rem",
+                        fontWeight: 600,
+                        color: "#ffffff",
+                        whiteSpace: "nowrap",
+                        background: "rgba(0,0,0,0.8)",
+                        borderRadius: 6,
+                        border: "1px solid rgba(255,255,255,0.15)",
+                      }}
+                    >
+                      {panel.hotspot.label}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </section>
+    );
+  }
+
+  // Desktop Render Flow (Premium Sticky Parallax with strict non-overlapping opacity bounds)
   return (
     <section
       id="design"
@@ -98,30 +282,26 @@ export default function DesignSection() {
           {/* Left — Text Panels */}
           <div style={{ position: "relative", minHeight: 480 }} className="design-text-side">
             {panels.map((panel, i) => {
-              const start = i / panels.length;
-              const end = (i + 1) / panels.length;
-              
-              // Prevent fade-out on first panel at top, and prevent fade-out on last panel at bottom
-              const opacityRange = i === 0 
-                ? [1, 1, 1, 0]
-                : i === panels.length - 1
-                ? [0, 1, 1, 1]
-                : [0, 1, 1, 0];
+              // Exact non-overlapping boundaries for opacity transitions on Desktop scroll
+              // Panel 1: Active 0.00 -> 0.22, Fade-out ends at 0.28
+              // Panel 2: Active 0.36 -> 0.58, Fade-in starts 0.34, Fade-out ends 0.64
+              // Panel 3: Active 0.72 -> 1.00, Fade-in starts 0.70
+              const ranges = i === 0 
+                ? [[0.00, 0.05, 0.22, 0.28], [1, 1, 1, 0]]
+                : i === 1
+                ? [[0.30, 0.36, 0.58, 0.64], [0, 1, 1, 0]]
+                : [[0.66, 0.72, 0.95, 1.00], [0, 1, 1, 1]];
 
-              const panelOpacity = useTransform(
-                scrollYProgress,
-                [
-                  Math.max(0, start - 0.05),
-                  start + 0.05,
-                  end - 0.05,
-                  Math.min(1, end + 0.05),
-                ],
-                opacityRange
-              );
+              const panelOpacity = useTransform(scrollYProgress, ranges[0], ranges[1]);
               const panelY = useTransform(
                 scrollYProgress,
-                [start - 0.1, start + 0.05],
-                [30, 0]
+                i === 0 
+                  ? [0.00, 0.05]
+                  : i === 1
+                  ? [0.28, 0.36]
+                  : [0.64, 0.72],
+                [30, 0],
+                { clamp: true }
               );
 
               return (
@@ -134,6 +314,7 @@ export default function DesignSection() {
                     top: 0,
                     left: 0,
                     right: 0,
+                    pointerEvents: i === 0 ? "auto" : "none", // Prevent click conflicts
                   }}
                 >
                   {/* Tags Container */}
@@ -164,7 +345,7 @@ export default function DesignSection() {
                       </span>
                     </div>
 
-                    {/* Tag 2 — Highlight detail (Moved up here) */}
+                    {/* Tag 2 — Highlight detail */}
                     <div
                       style={{
                         display: "inline-flex",
@@ -228,7 +409,7 @@ export default function DesignSection() {
                     {panel.description}
                   </p>
 
-                  {/* Discover Button replacing old highlight pill */}
+                  {/* Discover Button */}
                   <motion.button
                     whileHover={{ scale: 1.04 }}
                     whileTap={{ scale: 0.96 }}
@@ -252,13 +433,7 @@ export default function DesignSection() {
                   </motion.button>
 
                   {/* Progress indicator */}
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: 8,
-                      marginTop: 48,
-                    }}
-                  >
+                  <div style={{ display: "flex", gap: 8, marginTop: 48 }}>
                     {panels.map((_, pi) => (
                       <div
                         key={pi}
@@ -294,7 +469,6 @@ export default function DesignSection() {
                 maxWidth: 440,
                 height: 520,
                 borderRadius: 32,
-                // Luôn giữ màu trắng sữa mờ (milky white glassmorphism) cho Card bất kể theme
                 background: "rgba(255, 255, 255, 0.85)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
@@ -348,7 +522,7 @@ export default function DesignSection() {
                   priority
                   style={{
                     objectFit: "contain",
-                    transform: "translateZ(50px)", // Pop out effect
+                    transform: "translateZ(50px)",
                   }}
                 />
 
@@ -390,21 +564,6 @@ export default function DesignSection() {
             display: grid;
             grid-template-columns: 1.2fr 1fr;
             gap: 60px;
-          }
-          @media (max-width: 991px) {
-            .design-grid {
-              grid-template-columns: 1fr !important;
-              gap: 120px !important;
-            }
-            .design-text-side {
-              min-height: 380px !important;
-            }
-            #design .container {
-              padding: 0 24px !important;
-            }
-            #design {
-              height: 250vh !important;
-            }
           }
         `}</style>
       </div>
