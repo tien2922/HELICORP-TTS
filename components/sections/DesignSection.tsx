@@ -45,7 +45,7 @@ export default function DesignSection() {
     offset: ["start start", "end end"],
   });
 
-  // Smooth layout transforms for the card and image based on scroll progress
+  // Smooth layout transforms for the card and image based on scroll progress (Active only when mounted)
   const cardRotateY = useTransform(scrollYProgress, [0, 0.5, 1], [-12, 0, 12]);
   const cardRotateX = useTransform(scrollYProgress, [0, 0.5, 1], [15, 8, -5]);
   const cardScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 1.05]);
@@ -53,13 +53,7 @@ export default function DesignSection() {
   const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.85, 1.05, 0.9]);
   const imageY = useTransform(scrollYProgress, [0, 0.5, 1], [-20, 0, 30]);
 
-  // Render a simple loading placeholder on server to prevent Hydration Mismatch
-  if (!mounted) {
-    return (
-      <section id="design" style={{ background: "var(--bg-primary)", minHeight: "100vh" }} />
-    );
-  }
-
+  // Ensure same HTML structure is returned during Server Side Rendering (SSR) and Client Hydration
   return (
     <section
       id="design"
@@ -121,8 +115,9 @@ export default function DesignSection() {
                 yValueRange = [20, 20, 0, 0];
               }
 
-              const panelOpacity = useTransform(scrollYProgress, scrollRange, opacityRange);
-              const panelY = useTransform(scrollYProgress, yScrollRange, yValueRange);
+              // Apply transforms safely, fallback to static defaults during SSR
+              const panelOpacity = mounted ? useTransform(scrollYProgress, scrollRange, opacityRange) : (i === 0 ? 1 : 0);
+              const panelY = mounted ? useTransform(scrollYProgress, yScrollRange, yValueRange) : 0;
 
               return (
                 <motion.div
@@ -263,9 +258,9 @@ export default function DesignSection() {
             <motion.div
               className="design-glass-card"
               style={{
-                rotateY: cardRotateY,
-                rotateX: cardRotateX,
-                scale: cardScale,
+                rotateY: mounted ? cardRotateY : 0,
+                rotateX: mounted ? cardRotateX : 8,
+                scale: mounted ? cardScale : 1,
                 boxShadow: theme === "dark" 
                   ? "0 40px 100px rgba(0, 0, 0, 0.7)"
                   : "0 40px 100px rgba(0, 0, 0, 0.15)",
@@ -290,9 +285,9 @@ export default function DesignSection() {
                 style={{
                   position: "relative",
                   zIndex: 1,
-                  rotate: imageRotate,
-                  scale: imageScale,
-                  y: imageY,
+                  rotate: mounted ? imageRotate : 0,
+                  scale: mounted ? imageScale : 1,
+                  y: mounted ? imageY : 0,
                   filter: "drop-shadow(0 30px 50px rgba(0,0,0,0.55))",
                   display: "flex",
                   justifyContent: "center",
@@ -322,6 +317,7 @@ export default function DesignSection() {
                     total={panels.length}
                     scrollYProgress={scrollYProgress}
                     hotspot={p.hotspot}
+                    mounted={mounted}
                   />
                 ))}
               </motion.div>
@@ -394,7 +390,7 @@ export default function DesignSection() {
         .design-glass-card {
           position: relative;
           width: 100%;
-          maxWidth: 440px;
+          max-width: 440px;
           height: 520px;
           border-radius: 32px;
           background: rgba(255, 255, 255, 0.85);
@@ -454,9 +450,10 @@ interface HotspotProps {
   total: number;
   scrollYProgress: any;
   hotspot: { x: string; y: string; label: string };
+  mounted: boolean;
 }
 
-function HotspotItem({ index, total, scrollYProgress, hotspot }: HotspotProps) {
+function HotspotItem({ index, total, scrollYProgress, hotspot, mounted }: HotspotProps) {
   const start = index / total;
   const end = (index + 1) / total;
   
@@ -467,17 +464,8 @@ function HotspotItem({ index, total, scrollYProgress, hotspot }: HotspotProps) {
   const r4 = end;
 
   // Transform scale and opacity dynamically based on scroll ranges
-  const opacity = useTransform(
-    scrollYProgress,
-    [r1, r2, r3, r4],
-    [0, 1, 1, 0]
-  );
-  
-  const scale = useTransform(
-    scrollYProgress,
-    [r1, r2, r3, r4],
-    [0.6, 1, 1, 0.6]
-  );
+  const opacity = mounted ? useTransform(scrollYProgress, [r1, r2, r3, r4], [0, 1, 1, 0]) : 0;
+  const scale = mounted ? useTransform(scrollYProgress, [r1, r2, r3, r4], [0.6, 1, 1, 0.6]) : 0.6;
 
   return (
     <motion.div
