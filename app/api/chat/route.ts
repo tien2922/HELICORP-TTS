@@ -27,23 +27,23 @@ Rules of behavior:
 `;
 
 export async function POST(req: Request) {
+  const { messages } = await req.json();
+  const userMessage = messages[messages.length - 1]?.content?.toLowerCase() || "";
+  
+  // Standard offline fallback responses
+  let reply = "Xin chào! Mình là trợ lý ảo của Helicorp. Bạn cần tư vấn thông tin gì về AirPods Pro 3 thế?";
+
+  if (userMessage.includes("giá") || userMessage.includes("bao nhiêu") || userMessage.includes("tiền")) {
+    reply = "AirPods Pro 3 hiện đang có giá ưu đãi là $249 USD tại Helicorp! Bạn có thể bấm nút 'Buy Now' ở góc phải màn hình để đặt mua ngay.";
+  } else if (userMessage.includes("pin") || userMessage.includes("thời lượng")) {
+    reply = "AirPods Pro 3 cho thời lượng nghe lên đến 6 giờ trên tai nghe lẻ và tổng cộng 30 giờ khi kết hợp cùng hộp sạc MagSafe tiện lợi đó bạn.";
+  } else if (userMessage.includes("tính năng") || userMessage.includes("nổi bật") || userMessage.includes("gì")) {
+    reply = "Tai nghe sở hữu Chống ồn chủ động (ANC) vượt trội, cảm biến nhận diện da tự động dừng/phát nhạc, tính năng Dịch trực tiếp (Live Translation) thời gian thực và trọng lượng siêu nhẹ chỉ 4.28g!";
+  }
+
   try {
-    const { messages } = await req.json();
     const apiKey = process.env.GEMINI_API_KEY;
-
     if (!apiKey) {
-      // Fallback: If no API key is provided, return a friendly auto-reply
-      const userMessage = messages[messages.length - 1]?.content?.toLowerCase() || "";
-      let reply = "Xin chào! Mình là trợ lý ảo của Helicorp. Bạn cần tư vấn thông tin gì về AirPods Pro 3 thế?";
-
-      if (userMessage.includes("giá") || userMessage.includes("bao nhiêu") || userMessage.includes("tiền")) {
-        reply = "AirPods Pro 3 hiện đang có giá ưu đãi là $249 USD tại Helicorp! Bạn có thể bấm nút 'Buy Now' ở góc phải màn hình để đặt mua ngay.";
-      } else if (userMessage.includes("pin") || userMessage.includes("thời lượng")) {
-        reply = "AirPods Pro 3 cho thời lượng nghe lên đến 6 giờ trên tai nghe lẻ và tổng cộng 30 giờ khi kết hợp cùng hộp sạc MagSafe tiện lợi đó bạn.";
-      } else if (userMessage.includes("tính năng") || userMessage.includes("nổi bật") || userMessage.includes("gì")) {
-        reply = "Tai nghe sở hữu Chống ồn chủ động (ANC) vượt trội, cảm biến nhận diện da tự động dừng/phát nhạc, tính năng Dịch trực tiếp (Live Translation) thời gian thực và trọng lượng siêu nhẹ chỉ 4.28g!";
-      }
-
       return NextResponse.json({ text: reply });
     }
 
@@ -69,9 +69,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ text });
   } catch (error: any) {
     console.error("Chatbot API Error:", error);
-    return NextResponse.json(
-      { error: "Internal server error occurred." },
-      { status: 500 }
-    );
+    // If Gemini service fails or key is invalid, return the local fallback response safely
+    return NextResponse.json({ text: reply });
   }
 }
