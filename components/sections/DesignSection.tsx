@@ -96,7 +96,7 @@ export default function DesignSection() {
           }}
         >
           {/* Left — Text Panels */}
-          <div style={{ position: "relative", minHeight: 400 }} className="design-text-side">
+          <div style={{ position: "relative", minHeight: 480 }} className="design-text-side">
             {panels.map((panel, i) => {
               const start = i / panels.length;
               const end = (i + 1) / panels.length;
@@ -394,20 +394,16 @@ export default function DesignSection() {
           @media (max-width: 991px) {
             .design-grid {
               grid-template-columns: 1fr !important;
-              gap: 180px !important; /* Push 3D AirPods image down significantly */
+              gap: 120px !important;
             }
             .design-text-side {
-              min-height: 240px !important;
+              min-height: 380px !important;
             }
             #design .container {
               padding: 0 24px !important;
             }
             #design {
               height: 250vh !important;
-            }
-            /* Scale down AirPods image slightly on mobile to fit nicely */
-            #design div[style*="rotate: imageRotate"] {
-              transform: scale(0.85) !important;
             }
           }
         `}</style>
