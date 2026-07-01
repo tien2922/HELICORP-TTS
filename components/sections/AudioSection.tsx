@@ -2,6 +2,7 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import Image from "next/image";
 
 const WaveVisualizer = () => {
   const [mounted, setMounted] = useState(false);
@@ -67,21 +68,19 @@ const WaveVisualizer = () => {
   );
 };
 
-import Image from "next/image";
-
 const features = [
   {
-    image: "/ca1.jpg",
+    image: "/ca1.webp",
     boldPrefix: "New ultra-low-noise microphones.",
     desc: " Using advanced computational audio to remove background noise and deliver clean audio.",
   },
   {
-    image: "/ca2.jpg",
+    image: "/ca2.webp",
     boldPrefix: "Voice Isolation.",
     desc: " AirPods Pro 3 reduce background noise and isolate voices so you can hear clearly in loud environments.",
   },
   {
-    image: "/ca3.jpg",
+    image: "/ca3.webp",
     boldPrefix: "Adaptive Audio.",
     desc: " AirPods Pro 3 combine Active Noise Cancellation with next-level transparency to adapt sound dynamically.",
   },
@@ -233,13 +232,7 @@ export default function AudioSection() {
         </motion.div>
 
         {/* Feature Cards */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 24,
-          }}
-        >
+        <div className="audio-grid">
           {features.map((feat, i) => (
             <motion.div
               key={i}
@@ -263,10 +256,10 @@ export default function AudioSection() {
             >
               {/* Image Container with large rounded corners */}
               <div
+                className="audio-card-image-wrap"
                 style={{
                   position: "relative",
                   width: "100%",
-                  height: 380,
                   borderRadius: 24,
                   overflow: "hidden",
                   marginBottom: 16,
@@ -334,15 +327,23 @@ export default function AudioSection() {
 
       {/* Responsive */}
       <style>{`
+        .audio-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 24px;
+        }
+        .audio-card-image-wrap {
+          height: 380px;
+        }
         @media (max-width: 768px) {
           #audio > div.container {
             padding: 0 24px !important;
           }
-          #audio div[style*="grid-template-columns: repeat(3"] {
+          .audio-grid {
             grid-template-columns: 1fr !important;
             gap: 40px !important;
           }
-          #audio div[style*="height: 380"] {
+          .audio-card-image-wrap {
             height: 280px !important;
           }
         }

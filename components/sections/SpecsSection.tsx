@@ -43,15 +43,15 @@ const environmentCards = [
       </svg>
     ),
     boldText: "25% more units",
-    prefixText: "Ships in compact packaging for ",
-    suffixText: " per trip.",
+    prefixText: "Shipped with ",
+    suffixText: " per charter flight to cut transportation emissions.",
     highlightColor: "#0ea5e9",
   },
 ];
 
 export default function SpecsSection() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-120px" });
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
   const { theme } = useTheme();
 
   return (
@@ -59,29 +59,32 @@ export default function SpecsSection() {
       id="specs"
       ref={ref}
       style={{
-        background: "var(--bg-secondary)",
-        padding: "160px 0",
+        background: "var(--bg-primary)",
+        padding: "160px 0 120px",
         position: "relative",
         overflow: "hidden",
         transition: "background-color 0.3s ease",
       }}
     >
-      {/* Background grids */}
+      {/* Background decoration */}
       <div
         style={{
           position: "absolute",
-          inset: 0,
-          backgroundImage: theme === "dark"
-            ? `linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px)`
-            : `linear-gradient(rgba(0,0,0,0.01) 1px, transparent 1px)`,
-          backgroundSize: "100% 80px",
+          top: "10%",
+          right: "-10%",
+          width: 500,
+          height: 500,
+          borderRadius: "50%",
+          background: theme === "dark" 
+            ? "radial-gradient(circle, rgba(255,255,255,0.015) 0%, transparent 70%)"
+            : "radial-gradient(circle, rgba(0,0,0,0.01) 0%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
 
-      <div style={{ width: "100%", padding: "0 80px", position: "relative", zIndex: 1 }}>
-        {/* Header (Căn giữa) */}
-        <div style={{ textAlign: "center", maxWidth: 720, margin: "0 auto 80px" }}>
+      <div className="container" style={{ position: "relative", zIndex: 1 }}>
+        {/* Title Block */}
+        <div style={{ textAlign: "center", marginBottom: 80 }}>
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -135,13 +138,7 @@ export default function SpecsSection() {
         </div>
 
         {/* Dynamic 3 Grid Cards */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 28,
-          }}
-        >
+        <div className="specs-grid">
           {environmentCards.map((card, i) => (
             <motion.div
               key={i}
@@ -178,7 +175,7 @@ export default function SpecsSection() {
               <div
                 style={{
                   color: card.iconColor,
-                  marginBottom: 24,
+                  marginBottom: 20,
                   display: "flex",
                   alignItems: "center",
                 }}
@@ -186,28 +183,28 @@ export default function SpecsSection() {
                 {card.icon}
               </div>
 
-              {/* Middle Section — Content description */}
-              <p
-                style={{
-                  fontSize: "1.15rem",
-                  fontWeight: 600,
-                  lineHeight: 1.45,
-                  color: theme === "dark" ? "#ffffff" : "#1d1d1f",
-                  textAlign: "left",
-                  margin: 0,
-                  paddingRight: 10,
-                  transition: "color 0.3s ease",
-                }}
-              >
-                {card.prefixText}
-                <span style={{ color: card.highlightColor }}>
-                  {card.boldText}
-                </span>
-                {card.suffixText}
-              </p>
+              {/* Bottom Section — Text highlights */}
+              <div style={{ paddingRight: 32, flex: 1, display: "flex", alignItems: "flex-end" }}>
+                <p
+                  style={{
+                    fontSize: "0.95rem",
+                    lineHeight: 1.5,
+                    color: theme === "dark" ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)",
+                    fontFamily: "var(--font)",
+                    textAlign: "left",
+                  }}
+                >
+                  {card.prefixText}
+                  <strong style={{ color: card.highlightColor, fontWeight: 700 }}>
+                    {card.boldText}
+                  </strong>
+                  {card.suffixText}
+                </p>
+              </div>
 
-              {/* Bottom Right — Add Plus Circle action button closer to corner */}
+              {/* Black / White circular + button absolute bottom-right */}
               <div
+                className="plus-btn"
                 style={{
                   position: "absolute",
                   bottom: 24,
@@ -215,7 +212,7 @@ export default function SpecsSection() {
                   width: 32,
                   height: 32,
                   borderRadius: "50%",
-                  background: theme === "dark" ? "#ffffff" : "#000000",
+                  backgroundColor: theme === "dark" ? "#ffffff" : "#000000",
                   color: theme === "dark" ? "#000000" : "#ffffff",
                   display: "flex",
                   alignItems: "center",
@@ -234,8 +231,13 @@ export default function SpecsSection() {
 
       {/* Responsive styles */}
       <style>{`
+        .specs-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 28px;
+        }
         @media (max-width: 991px) {
-          #specs div[style*="grid-template-columns: repeat(3"] {
+          .specs-grid {
             grid-template-columns: 1fr !important;
             gap: 24px !important;
           }

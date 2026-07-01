@@ -77,12 +77,16 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
               alignItems: "center",
               gap: 8,
               textDecoration: "none",
+              whiteSpace: "nowrap",
+              flexShrink: 0,
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/logo12.png"
               alt="Apple Logo"
+              width={22}
+              height={22}
               style={{
                 width: 22,
                 height: 22,
@@ -99,6 +103,7 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
                 fontSize: "1rem",
                 letterSpacing: "-0.02em",
                 transition: "color 0.3s ease",
+                whiteSpace: "nowrap",
               }}
             >
               AirPods 3
@@ -144,11 +149,12 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
               ))}
             </nav>
 
-            {/* Actions */}
+             {/* Actions */}
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              {/* Premium Switch Toggle for Dark/Light Mode */}
+              {/* Premium Switch Toggle for Dark/Light Mode (hidden on mobile, shown on desktop) */}
               <div
                 onClick={toggleTheme}
+                className="hidden md:flex"
                 style={{
                   width: 52,
                   height: 28,
@@ -205,7 +211,7 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
               </button>
             </div>
 
-            {/* Mobile menu */}
+            {/* Mobile menu button (always visible on mobile) */}
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -244,11 +250,12 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
               left: 0,
               right: 0,
               zIndex: 999,
-              background: "rgba(0,0,0,0.95)",
+              background: theme === "dark" ? "rgba(10,10,10,0.96)" : "rgba(255,255,255,0.96)",
               backdropFilter: "blur(40px)",
               WebkitBackdropFilter: "blur(40px)",
-              borderBottom: "1px solid rgba(255,255,255,0.08)",
+              borderBottom: theme === "dark" ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.08)",
               padding: "20px 24px 28px",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
             }}
           >
             <nav
@@ -274,7 +281,7 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
                     cursor: "pointer",
                     textAlign: "left",
                     padding: "12px 0",
-                    borderBottom: "1px solid rgba(255,255,255,0.04)",
+                    borderBottom: theme === "dark" ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0,0,0,0.04)",
                     fontFamily: "var(--font)",
                     transition: "color 0.2s",
                   }}
@@ -282,13 +289,74 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
                   {link.label}
                 </motion.button>
               ))}
+              
+              {/* Theme Selector inside mobile drawer */}
+              <div 
+                style={{ 
+                  display: "flex", 
+                  justifyContent: "space-between", 
+                  alignItems: "center",
+                  padding: "16px 0",
+                  borderBottom: theme === "dark" ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0,0,0,0.04)",
+                }}
+              >
+                <span style={{ fontSize: "1rem", fontWeight: 500, color: "var(--text-secondary)" }}>
+                  Theme Mode
+                </span>
+                <div
+                  onClick={toggleTheme}
+                  style={{
+                    width: 52,
+                    height: 28,
+                    borderRadius: 100,
+                    background: theme === "dark" ? "#000000" : "#ffffff",
+                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.2)" : "1px solid rgba(0, 0, 0, 0.15)",
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "0 4px",
+                    cursor: "pointer",
+                    position: "relative",
+                  }}
+                >
+                  <motion.div
+                    layout
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: "50%",
+                      background: theme === "dark" ? "#ffffff" : "#000000",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                      position: "absolute",
+                      left: theme === "dark" ? "auto" : 4,
+                      right: theme === "dark" ? 4 : "auto",
+                    }}
+                  >
+                    {theme === "dark" ? (
+                      <Moon size={11} color="#000000" />
+                    ) : (
+                      <Sun size={11} color="#ffffff" />
+                    )}
+                  </motion.div>
+                </div>
+              </div>
+
               <button
                 onClick={() => {
                   setMobileOpen(false);
                   onBuyClick();
                 }}
                 className="btn-primary"
-                style={{ marginTop: 16, textAlign: "center", justifyContent: "center" }}
+                style={{ 
+                  marginTop: 20, 
+                  textAlign: "center", 
+                  justifyContent: "center",
+                  background: theme === "dark" ? "#ffffff" : "#000000",
+                  color: theme === "dark" ? "#000000" : "#ffffff",
+                }}
               >
                 Buy Now
               </button>
@@ -296,6 +364,17 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <style>{`
+        @media (max-width: 767px) {
+          .hidden.md\\:flex {
+            display: none !important;
+          }
+          nav.hidden.md\\:flex {
+            display: none !important;
+          }
+        }
+      `}</style>
     </>
   );
 }
