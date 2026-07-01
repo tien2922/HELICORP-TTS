@@ -87,12 +87,15 @@ export default function BatterySection() {
           {/* Section label */}
           <div
             style={{
+              position: "relative",
+              display: "block",
               fontSize: "0.7rem",
               letterSpacing: "0.2em",
               textTransform: "uppercase",
               color: "var(--text-muted)",
               fontWeight: 600,
-              marginBottom: 20,
+              marginBottom: 24,
+              zIndex: 10,
             }}
           >
             04 • Experience
