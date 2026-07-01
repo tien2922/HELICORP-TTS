@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
 // System instructions to feed knowledge base to Gemini
@@ -47,29 +46,32 @@ export async function POST(req: Request) {
       return NextResponse.json({ text: reply });
     }
 
-    // Initialize Gemini API client
-    const ai = new GoogleGenerativeAI(apiKey);
-    const model = ai.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      systemInstruction: SYSTEM_INSTRUCTION,
-    });
+    // Prepare prompt with context and instruction
+    const promptText = `${SYSTEM_INSTRUCTION}\n\nUser: ${userMessage}\nAssistant:`;
 
-    // Format chat history for Gemini
-    const chat = model.startChat({
-      history: messages.slice(0, -1).map((msg: any) => ({
-        role: msg.role === "user" ? "user" : "model",
-        parts: [{ text: msg.content }],
-      })),
-    });
+    // Make native HTTP POST request to Google Gemini API
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: promptText }] }],
+        }),
+      }
+    );
 
-    const lastMessage = messages[messages.length - 1]?.content || "";
-    const result = await chat.sendMessage(lastMessage);
-    const text = result.response.text();
+    const data = await response.json();
+    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    return NextResponse.json({ text });
+    if (generatedText) {
+      return NextResponse.json({ text: generatedText.trim() });
+    }
+    
+    return NextResponse.json({ text: reply });
   } catch (error: any) {
     console.error("Chatbot API Error:", error);
-    // If Gemini service fails or key is invalid, return the local fallback response safely
+    // If Gemini service fails, return the local fallback response safely
     return NextResponse.json({ text: reply });
   }
 }
