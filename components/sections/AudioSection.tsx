@@ -97,7 +97,7 @@ export default function AudioSection() {
       ref={ref}
       style={{
         background: "var(--bg-primary)",
-        padding: "160px 0",
+        padding: "20px 0",
         position: "relative",
         overflow: "hidden",
         transition: "background-color 0.3s ease",

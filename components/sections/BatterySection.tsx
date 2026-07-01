@@ -58,7 +58,7 @@ export default function BatterySection() {
       ref={ref}
       style={{
         background: "var(--bg-primary)",
-        padding: "160px 0",
+        padding: "20px 0",
         position: "relative",
         overflow: "hidden",
         transition: "background-color 0.3s ease",
@@ -94,7 +94,7 @@ export default function BatterySection() {
           fontWeight: 600,
         }}
       >
-        03 • Experience
+        04 • Experience
       </div>
 
       <div className="container" style={{ position: "relative", zIndex: 1 }}>

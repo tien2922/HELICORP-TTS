@@ -47,7 +47,9 @@ export default function HeroSection({ onBuyClick }: { onBuyClick: () => void }) 
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
+          // @ts-expect-error fetchPriority not yet in React video types
+          fetchPriority="high"
           poster="/airpods-hero.webp"
           style={{
             position: "absolute",

@@ -266,21 +266,20 @@ body {
   border-color: rgba(0, 0, 0, 0.4);
 }
 
-/* ─── Global Responsive Padding Overrides ─────────────────── */
-@media (max-width: 768px) {
-  #design {
-    padding: 20px 0 !important;
-  }
-  #audio {
-    padding: 20px 0 !important;
-  }
-  #experience {
-    padding: 20px 0 !important;
-  }
-  #specs {
-    padding: 20px 0 !important;
-  }
-  #contact {
-    padding: 20px 0 !important;
-  }
+/* ─── Global Section Spacing (20px between all sections) ─────────────────── */
+#design {
+  padding: 20px 0 !important;
 }
+#audio {
+  padding: 20px 0 !important;
+}
+#experience {
+  padding: 20px 0 !important;
+}
+#specs {
+  padding: 20px 0 !important;
+}
+#contact {
+  padding: 20px 0 !important;
+}
+
