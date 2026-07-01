@@ -2,6 +2,7 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import Image from "next/image";
 
 const tabsData = [
   {
@@ -251,10 +252,13 @@ export default function BatterySection() {
                 transition={{ duration: 0.45, ease: "easeOut" }}
                 style={{ width: "100%", position: "relative" }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={currentTab.image}
                   alt={currentTab.label}
+                  width={600}
+                  height={340}
+                  sizes="(max-width: 991px) 100vw, 600px"
+                  priority={activeTab === "translation"}
                   style={{
                     width: "100%",
                     height: "auto",
