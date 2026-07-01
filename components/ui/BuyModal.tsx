@@ -156,7 +156,7 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
               {/* Product Image */}
               <div style={{ position: "relative", width: "100%", height: 200, margin: "24px 0" }}>
                 <Image
-                  src="/airpods-hero copy.png"
+                  src="/airpods-hero copy.webp"
                   alt="AirPods Pro 3"
                   fill
                   style={{ objectFit: "contain" }}
