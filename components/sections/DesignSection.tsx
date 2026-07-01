@@ -335,7 +335,7 @@ export default function DesignSection() {
                 }}
               >
                 <Image
-                  src="/airpods-side1.png"
+                  src="/airpods-side1.webp"
                   alt="AirPods 3 premium design"
                   width={340}
                   height={340}

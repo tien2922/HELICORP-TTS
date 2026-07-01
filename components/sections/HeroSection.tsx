@@ -47,6 +47,8 @@ export default function HeroSection({ onBuyClick }: { onBuyClick: () => void }) 
           muted
           loop
           playsInline
+          preload="metadata"
+          poster="/airpods-hero.webp"
           style={{
             position: "absolute",
             top: "50%",
