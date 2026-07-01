@@ -85,12 +85,10 @@ export default function DesignSection() {
         />
 
         <div
+          className="design-grid"
           style={{
             position: "relative",
             zIndex: 1,
-            display: "grid",
-            gridTemplateColumns: "1.2fr 1fr",
-            gap: 60,
             alignItems: "center",
             width: "100%",
             padding: "0 80px",
@@ -98,10 +96,18 @@ export default function DesignSection() {
           }}
         >
           {/* Left — Text Panels */}
-          <div style={{ position: "relative", minHeight: 400 }}>
+          <div style={{ position: "relative", minHeight: 400 }} className="design-text-side">
             {panels.map((panel, i) => {
               const start = i / panels.length;
               const end = (i + 1) / panels.length;
+              
+              // Prevent fade-out on first panel at top, and prevent fade-out on last panel at bottom
+              const opacityRange = i === 0 
+                ? [1, 1, 1, 0]
+                : i === panels.length - 1
+                ? [0, 1, 1, 1]
+                : [0, 1, 1, 0];
+
               const panelOpacity = useTransform(
                 scrollYProgress,
                 [
@@ -110,12 +116,12 @@ export default function DesignSection() {
                   end - 0.05,
                   Math.min(1, end + 0.05),
                 ],
-                [0, 1, 1, 0]
+                opacityRange
               );
               const panelY = useTransform(
                 scrollYProgress,
                 [start - 0.1, start + 0.05],
-                [40, 0]
+                [30, 0]
               );
 
               return (
@@ -380,10 +386,20 @@ export default function DesignSection() {
 
         {/* Responsive */}
         <style>{`
-          @media (max-width: 768px) {
-            #design .container, #design div[style*="display: grid"] {
+          .design-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+          }
+          @media (max-width: 991px) {
+            .design-grid {
               grid-template-columns: 1fr !important;
-              gap: 30px !important;
+              gap: 40px !important;
+            }
+            .design-text-side {
+              min-height: 320px !important;
+            }
+            #design .container {
               padding: 0 24px !important;
             }
             #design {

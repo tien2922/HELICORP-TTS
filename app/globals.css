@@ -265,3 +265,22 @@ body {
   background: rgba(0, 0, 0, 0.05);
   border-color: rgba(0, 0, 0, 0.4);
 }
+
+/* ─── Global Responsive Padding Overrides ─────────────────── */
+@media (max-width: 768px) {
+  #design {
+    padding: 80px 0 !important;
+  }
+  #audio {
+    padding: 80px 0 !important;
+  }
+  #experience {
+    padding: 80px 0 !important;
+  }
+  #specs {
+    padding: 80px 0 !important;
+  }
+  #contact {
+    padding: 80px 0 !important;
+  }
+}
