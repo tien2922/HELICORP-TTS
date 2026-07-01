@@ -14,16 +14,20 @@ const DesignSection = dynamic(
   { ssr: false }
 );
 const AudioSection = dynamic(
-  () => import("@/components/sections/AudioSection")
+  () => import("@/components/sections/AudioSection"),
+  { ssr: false }
 );
 const BatterySection = dynamic(
-  () => import("@/components/sections/BatterySection")
+  () => import("@/components/sections/BatterySection"),
+  { ssr: false }
 );
 const SpecsSection = dynamic(
-  () => import("@/components/sections/SpecsSection")
+  () => import("@/components/sections/SpecsSection"),
+  { ssr: false }
 );
 const ContactSection = dynamic(
-  () => import("@/components/sections/ContactSection")
+  () => import("@/components/sections/ContactSection"),
+  { ssr: false }
 );
 
 export default function Home() {
