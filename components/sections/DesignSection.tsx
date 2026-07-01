@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "@/components/providers/ThemeProvider";
@@ -34,16 +34,6 @@ const panels = [
 export default function DesignSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 991);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -58,21 +48,340 @@ export default function DesignSection() {
   const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.85, 1.05, 0.9]);
   const imageY = useTransform(scrollYProgress, [0, 0.5, 1], [-20, 0, 30]);
 
-  // Mobile Render Flow (Clean, Stacked, Non-Sticky, Zero-Overlap)
-  if (isMobile) {
-    return (
-      <section
-        id="design"
-        style={{
-          background: "var(--bg-primary)",
-          padding: "80px 24px",
-          display: "flex",
-          flexDirection: "column",
-          gap: 60,
-        }}
-      >
+  return (
+    <section
+      id="design"
+      ref={containerRef}
+      style={{
+        position: "relative",
+        background: "var(--bg-primary)",
+        transition: "background-color 0.3s ease",
+      }}
+    >
+      {/* ── DESKTOP SCROLL DESIGN VIEW ── */}
+      <div className="design-desktop-view">
+        {/* Sticky container */}
+        <div
+          style={{
+            position: "sticky",
+            top: 0,
+            height: "100vh",
+            display: "flex",
+            alignItems: "center",
+            overflow: "hidden",
+          }}
+        >
+          {/* Ambient background glow */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: theme === "dark" 
+                ? "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(59,130,246,0.03) 0%, transparent 80%)"
+                : "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(59,130,246,0.08) 0%, transparent 80%)",
+              pointerEvents: "none",
+            }}
+          />
+
+          <div
+            className="design-grid"
+            style={{
+              position: "relative",
+              zIndex: 1,
+              alignItems: "center",
+              width: "100%",
+              padding: "0 80px",
+              maxWidth: "100%",
+            }}
+          >
+            {/* Left — Text Panels */}
+            <div style={{ position: "relative", minHeight: 480 }} className="design-text-side">
+              {panels.map((panel, i) => {
+                // Explicitly bound all values from 0.0 to 1.0 for perfect isolation
+                let opacityRange: number[] = [];
+                let scrollRange: number[] = [];
+                let yScrollRange: number[] = [];
+                let yValueRange: number[] = [];
+
+                if (i === 0) {
+                  scrollRange = [0.00, 0.22, 0.28, 1.00];
+                  opacityRange = [1, 1, 0, 0];
+                  yScrollRange = [0.00, 0.22, 0.28, 1.00];
+                  yValueRange = [0, 0, -20, -20];
+                } else if (i === 1) {
+                  scrollRange = [0.00, 0.28, 0.36, 0.58, 0.64, 1.00];
+                  opacityRange = [0, 0, 1, 1, 0, 0];
+                  yScrollRange = [0.00, 0.28, 0.36, 0.58, 0.64, 1.00];
+                  yValueRange = [20, 20, 0, 0, -20, -20];
+                } else {
+                  scrollRange = [0.00, 0.64, 0.72, 1.00];
+                  opacityRange = [0, 0, 1, 1];
+                  yScrollRange = [0.00, 0.64, 0.72, 1.00];
+                  yValueRange = [20, 20, 0, 0];
+                }
+
+                const panelOpacity = useTransform(scrollYProgress, scrollRange, opacityRange);
+                const panelY = useTransform(scrollYProgress, yScrollRange, yValueRange);
+
+                return (
+                  <motion.div
+                    key={panel.tag}
+                    style={{
+                      opacity: panelOpacity,
+                      y: panelY,
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                    }}
+                  >
+                    {/* Tags Container */}
+                    <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
+                      {/* Tag 1 — Category */}
+                      <div
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          padding: "6px 14px",
+                          borderRadius: 100,
+                          background: theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+                          border: theme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid rgba(0,0,0,0.1)",
+                          transition: "all 0.3s ease",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: "0.72rem",
+                            fontWeight: 700,
+                            color: theme === "dark" ? "#ffffff" : "#000000",
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                            transition: "color 0.3s ease",
+                          }}
+                        >
+                          {panel.tag}
+                        </span>
+                      </div>
+
+                      {/* Tag 2 — Highlight detail */}
+                      <div
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 6,
+                          padding: "6px 14px",
+                          borderRadius: 100,
+                          background: theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+                          border: theme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid rgba(0,0,0,0.1)",
+                          transition: "all 0.3s ease",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: "50%",
+                            background: theme === "dark" ? "#ffffff" : "#000000",
+                            transition: "background-color 0.3s ease",
+                          }}
+                        />
+                        <span
+                          style={{
+                            fontSize: "0.72rem",
+                            fontWeight: 700,
+                            color: theme === "dark" ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.8)",
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                            transition: "color 0.3s ease",
+                          }}
+                        >
+                          {panel.highlight}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <h2
+                      className="display-lg"
+                      style={{
+                        whiteSpace: "pre-line",
+                        marginBottom: 24,
+                        color: theme === "dark" ? "#ffffff" : "#000000",
+                        transition: "color 0.3s ease",
+                      }}
+                    >
+                      {panel.title}
+                    </h2>
+
+                    {/* Description */}
+                    <p 
+                      style={{ 
+                        fontSize: "0.92rem",
+                        lineHeight: 1.55,
+                        marginBottom: 36, 
+                        maxWidth: 520,
+                        color: theme === "dark" ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)",
+                        transition: "color 0.3s ease",
+                      }}
+                    >
+                      {panel.description}
+                    </p>
+
+                    {/* Discover Button */}
+                    <motion.button
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.96 }}
+                      style={{
+                        padding: "12px 32px",
+                        background: theme === "dark" ? "#ffffff" : "#000000",
+                        color: theme === "dark" ? "#000000" : "#ffffff",
+                        fontWeight: 600,
+                        fontSize: "0.9rem",
+                        borderRadius: 100,
+                        border: "none",
+                        cursor: "pointer",
+                        fontFamily: "var(--font)",
+                        boxShadow: theme === "dark"
+                          ? "0 10px 25px rgba(255, 255, 255, 0.1)"
+                          : "0 10px 25px rgba(0, 0, 0, 0.1)",
+                        transition: "all 0.3s ease",
+                      }}
+                    >
+                      Discover
+                    </motion.button>
+
+                    {/* Progress indicator */}
+                    <div style={{ display: "flex", gap: 8, marginTop: 48 }}>
+                      {panels.map((_, pi) => (
+                        <div
+                          key={pi}
+                          style={{
+                            height: 3,
+                            width: pi === i ? 28 : 12,
+                            borderRadius: 2,
+                            background: pi === i ? "#3b82f6" : theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.15)",
+                            transition: "all 0.3s ease",
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Right — Interactive Parallax Glassmorphism Card */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                perspective: 1500,
+                width: "100%",
+              }}
+            >
+              <motion.div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  maxWidth: 440,
+                  height: 520,
+                  borderRadius: 32,
+                  background: "rgba(255, 255, 255, 0.85)",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  border: "1px solid rgba(255, 255, 255, 0.4)",
+                  boxShadow: theme === "dark" 
+                    ? "0 40px 100px rgba(0, 0, 0, 0.7)"
+                    : "0 40px 100px rgba(0, 0, 0, 0.15)",
+                  rotateY: cardRotateY,
+                  rotateX: cardRotateX,
+                  scale: cardScale,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  overflow: "hidden",
+                  transformStyle: "preserve-3d",
+                }}
+              >
+                {/* Dynamic Glowing background inside card */}
+                <div
+                  style={{
+                    position: "absolute",
+                    width: "150%",
+                    height: "150%",
+                    background: "radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 60%)",
+                    filter: "blur(30px)",
+                    zIndex: 0,
+                    pointerEvents: "none",
+                  }}
+                />
+
+                {/* Parallax Product Image */}
+                <motion.div
+                  style={{
+                    position: "relative",
+                    zIndex: 1,
+                    rotate: imageRotate,
+                    scale: imageScale,
+                    y: imageY,
+                    filter: "drop-shadow(0 30px 50px rgba(0,0,0,0.55))",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    transformStyle: "preserve-3d",
+                  }}
+                >
+                  <Image
+                    src="/airpods-side1.webp"
+                    alt="AirPods 3 premium design"
+                    width={340}
+                    height={340}
+                    priority
+                    style={{
+                      objectFit: "contain",
+                      transform: "translateZ(50px)",
+                    }}
+                  />
+
+                  {/* Hotspots container */}
+                  {panels.map((p, index) => (
+                    <HotspotItem
+                      key={index}
+                      index={index}
+                      total={panels.length}
+                      scrollYProgress={scrollYProgress}
+                      hotspot={p.hotspot}
+                    />
+                  ))}
+                </motion.div>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Section label */}
+          <div
+            style={{
+              position: "absolute",
+              top: 40,
+              left: "50%",
+              transform: "translateX(-50%)",
+              fontSize: "0.7rem",
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "var(--text-muted)",
+              fontWeight: 600,
+            }}
+          >
+            02 • Design
+          </div>
+        </div>
+      </div>
+
+      {/* ── MOBILE STATIC CASCADE DESIGN VIEW ── */}
+      <div className="design-mobile-view">
         {/* Section Title */}
-        <div style={{ textAlign: "center", marginBottom: 20 }}>
+        <div style={{ textAlign: "center", marginBottom: 40 }}>
           <div
             style={{
               fontSize: "0.7rem",
@@ -95,6 +404,7 @@ export default function DesignSection() {
               gap: 32,
               borderBottom: i !== panels.length - 1 ? "1px solid var(--border-glass)" : "none",
               paddingBottom: i !== panels.length - 1 ? 60 : 0,
+              marginBottom: i !== panels.length - 1 ? 60 : 0,
             }}
           >
             {/* Text details */}
@@ -229,355 +539,36 @@ export default function DesignSection() {
             </div>
           </div>
         ))}
-      </section>
-    );
-  }
-
-  // Desktop Render Flow (Premium Sticky Parallax with strict non-overlapping opacity bounds)
-  return (
-    <section
-      id="design"
-      ref={containerRef}
-      style={{
-        position: "relative",
-        height: "300vh",
-        background: "var(--bg-primary)",
-        transition: "background-color 0.3s ease",
-      }}
-    >
-      {/* Sticky container */}
-      <div
-        style={{
-          position: "sticky",
-          top: 0,
-          height: "100vh",
-          display: "flex",
-          alignItems: "center",
-          overflow: "hidden",
-        }}
-      >
-        {/* Ambient background glow */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: theme === "dark" 
-              ? "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(59,130,246,0.03) 0%, transparent 80%)"
-              : "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(59,130,246,0.08) 0%, transparent 80%)",
-            pointerEvents: "none",
-          }}
-        />
-
-        <div
-          className="design-grid"
-          style={{
-            position: "relative",
-            zIndex: 1,
-            alignItems: "center",
-            width: "100%",
-            padding: "0 80px",
-            maxWidth: "100%",
-          }}
-        >
-          {/* Left — Text Panels */}
-          <div style={{ position: "relative", minHeight: 480 }} className="design-text-side">
-            {panels.map((panel, i) => {
-              // Explicitly bound all values from 0.0 to 1.0 for perfect isolation
-              let opacityRange: number[] = [];
-              let scrollRange: number[] = [];
-              let yScrollRange: number[] = [];
-              let yValueRange: number[] = [];
-
-              if (i === 0) {
-                scrollRange = [0.00, 0.22, 0.28, 1.00];
-                opacityRange = [1, 1, 0, 0];
-                yScrollRange = [0.00, 0.22, 0.28, 1.00];
-                yValueRange = [0, 0, -20, -20];
-              } else if (i === 1) {
-                scrollRange = [0.00, 0.28, 0.36, 0.58, 0.64, 1.00];
-                opacityRange = [0, 0, 1, 1, 0, 0];
-                yScrollRange = [0.00, 0.28, 0.36, 0.58, 0.64, 1.00];
-                yValueRange = [20, 20, 0, 0, -20, -20];
-              } else {
-                scrollRange = [0.00, 0.64, 0.72, 1.00];
-                opacityRange = [0, 0, 1, 1];
-                yScrollRange = [0.00, 0.64, 0.72, 1.00];
-                yValueRange = [20, 20, 0, 0];
-              }
-
-              const panelOpacity = useTransform(scrollYProgress, scrollRange, opacityRange);
-              const panelY = useTransform(scrollYProgress, yScrollRange, yValueRange);
-
-              // Only enable pointerEvents for the active panel to avoid click blockage
-              const isCurrentlyActive = i === 0 
-                ? scrollYProgress.get() < 0.3
-                : i === 1
-                ? scrollYProgress.get() >= 0.3 && scrollYProgress.get() < 0.65
-                : scrollYProgress.get() >= 0.65;
-
-              return (
-                <motion.div
-                  key={panel.tag}
-                  style={{
-                    opacity: panelOpacity,
-                    y: panelY,
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    pointerEvents: "auto",
-                  }}
-                >
-                  {/* Tags Container */}
-                  <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
-                    {/* Tag 1 — Category */}
-                    <div
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        padding: "6px 14px",
-                        borderRadius: 100,
-                        background: theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
-                        border: theme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid rgba(0,0,0,0.1)",
-                        transition: "all 0.3s ease",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "0.72rem",
-                          fontWeight: 700,
-                          color: theme === "dark" ? "#ffffff" : "#000000",
-                          letterSpacing: "0.08em",
-                          textTransform: "uppercase",
-                          transition: "color 0.3s ease",
-                        }}
-                      >
-                        {panel.tag}
-                      </span>
-                    </div>
-
-                    {/* Tag 2 — Highlight detail */}
-                    <div
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 6,
-                        padding: "6px 14px",
-                        borderRadius: 100,
-                        background: theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
-                        border: theme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid rgba(0,0,0,0.1)",
-                        transition: "all 0.3s ease",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: "50%",
-                          background: theme === "dark" ? "#ffffff" : "#000000",
-                          transition: "background-color 0.3s ease",
-                        }}
-                      />
-                      <span
-                        style={{
-                          fontSize: "0.72rem",
-                          fontWeight: 700,
-                          color: theme === "dark" ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.8)",
-                          letterSpacing: "0.08em",
-                          textTransform: "uppercase",
-                          transition: "color 0.3s ease",
-                        }}
-                      >
-                        {panel.highlight}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <h2
-                    className="display-lg"
-                    style={{
-                      whiteSpace: "pre-line",
-                      marginBottom: 24,
-                      color: theme === "dark" ? "#ffffff" : "#000000",
-                      transition: "color 0.3s ease",
-                    }}
-                  >
-                    {panel.title}
-                  </h2>
-
-                  {/* Description */}
-                  <p 
-                    style={{ 
-                      fontSize: "0.92rem",
-                      lineHeight: 1.55,
-                      marginBottom: 36, 
-                      maxWidth: 520,
-                      color: theme === "dark" ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)",
-                      transition: "color 0.3s ease",
-                    }}
-                  >
-                    {panel.description}
-                  </p>
-
-                  {/* Discover Button */}
-                  <motion.button
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
-                    style={{
-                      padding: "12px 32px",
-                      background: theme === "dark" ? "#ffffff" : "#000000",
-                      color: theme === "dark" ? "#000000" : "#ffffff",
-                      fontWeight: 600,
-                      fontSize: "0.9rem",
-                      borderRadius: 100,
-                      border: "none",
-                      cursor: "pointer",
-                      fontFamily: "var(--font)",
-                      boxShadow: theme === "dark"
-                        ? "0 10px 25px rgba(255, 255, 255, 0.1)"
-                        : "0 10px 25px rgba(0, 0, 0, 0.1)",
-                      transition: "all 0.3s ease",
-                    }}
-                  >
-                    Discover
-                  </motion.button>
-
-                  {/* Progress indicator */}
-                  <div style={{ display: "flex", gap: 8, marginTop: 48 }}>
-                    {panels.map((_, pi) => (
-                      <div
-                        key={pi}
-                        style={{
-                          height: 3,
-                          width: pi === i ? 28 : 12,
-                          borderRadius: 2,
-                          background: pi === i ? "#3b82f6" : theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.15)",
-                          transition: "all 0.3s ease",
-                        }}
-                      />
-                    ))}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* Right — Interactive Parallax Glassmorphism Card */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              perspective: 1500,
-              width: "100%",
-            }}
-          >
-            <motion.div
-              style={{
-                position: "relative",
-                width: "100%",
-                maxWidth: 440,
-                height: 520,
-                borderRadius: 32,
-                background: "rgba(255, 255, 255, 0.85)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                border: "1px solid rgba(255, 255, 255, 0.4)",
-                boxShadow: theme === "dark" 
-                  ? "0 40px 100px rgba(0, 0, 0, 0.7)"
-                  : "0 40px 100px rgba(0, 0, 0, 0.15)",
-                rotateY: cardRotateY,
-                rotateX: cardRotateX,
-                scale: cardScale,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                overflow: "hidden",
-                transformStyle: "preserve-3d",
-              }}
-            >
-              {/* Dynamic Glowing background inside card */}
-              <div
-                style={{
-                  position: "absolute",
-                  width: "150%",
-                  height: "150%",
-                  background: "radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 60%)",
-                  filter: "blur(30px)",
-                  zIndex: 0,
-                  pointerEvents: "none",
-                }}
-              />
-
-              {/* Parallax Product Image */}
-              <motion.div
-                style={{
-                  position: "relative",
-                  zIndex: 1,
-                  rotate: imageRotate,
-                  scale: imageScale,
-                  y: imageY,
-                  filter: "drop-shadow(0 30px 50px rgba(0,0,0,0.55))",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  transformStyle: "preserve-3d",
-                }}
-              >
-                <Image
-                  src="/airpods-side1.webp"
-                  alt="AirPods 3 premium design"
-                  width={340}
-                  height={340}
-                  priority
-                  style={{
-                    objectFit: "contain",
-                    transform: "translateZ(50px)",
-                  }}
-                />
-
-                {/* Hotspots container */}
-                {panels.map((p, index) => (
-                  <HotspotItem
-                    key={index}
-                    index={index}
-                    total={panels.length}
-                    scrollYProgress={scrollYProgress}
-                    hotspot={p.hotspot}
-                  />
-                ))}
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Section label */}
-        <div
-          style={{
-            position: "absolute",
-            top: 40,
-            left: "50%",
-            transform: "translateX(-50%)",
-            fontSize: "0.7rem",
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-            color: "var(--text-muted)",
-            fontWeight: 600,
-          }}
-        >
-          02 • Design
-        </div>
-
-        {/* Responsive */}
-        <style>{`
-          .design-grid {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 60px;
-          }
-        `}</style>
       </div>
+
+      {/* Responsive Styles with Pure CSS media query visibility toggles */}
+      <style>{`
+        #design {
+          height: 300vh;
+        }
+        .design-desktop-view {
+          display: block;
+        }
+        .design-mobile-view {
+          display: none;
+        }
+        .design-grid {
+          display: grid;
+          grid-template-columns: 1.2fr 1fr;
+          gap: 60px;
+        }
+        @media (max-width: 991px) {
+          #design {
+            height: auto !important;
+          }
+          .design-desktop-view {
+            display: none !important;
+          }
+          .design-mobile-view {
+            display: block !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }
