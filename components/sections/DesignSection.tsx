@@ -282,27 +282,38 @@ export default function DesignSection() {
           {/* Left — Text Panels */}
           <div style={{ position: "relative", minHeight: 480 }} className="design-text-side">
             {panels.map((panel, i) => {
-              // Exact non-overlapping boundaries for opacity transitions on Desktop scroll
-              // Panel 1: Active 0.00 -> 0.22, Fade-out ends at 0.28
-              // Panel 2: Active 0.36 -> 0.58, Fade-in starts 0.34, Fade-out ends 0.64
-              // Panel 3: Active 0.72 -> 1.00, Fade-in starts 0.70
-              const ranges = i === 0 
-                ? [[0.00, 0.05, 0.22, 0.28], [1, 1, 1, 0]]
-                : i === 1
-                ? [[0.30, 0.36, 0.58, 0.64], [0, 1, 1, 0]]
-                : [[0.66, 0.72, 0.95, 1.00], [0, 1, 1, 1]];
+              // Explicitly bound all values from 0.0 to 1.0 for perfect isolation
+              let opacityRange: number[] = [];
+              let scrollRange: number[] = [];
+              let yScrollRange: number[] = [];
+              let yValueRange: number[] = [];
 
-              const panelOpacity = useTransform(scrollYProgress, ranges[0], ranges[1]);
-              const panelY = useTransform(
-                scrollYProgress,
-                i === 0 
-                  ? [0.00, 0.05]
-                  : i === 1
-                  ? [0.28, 0.36]
-                  : [0.64, 0.72],
-                [30, 0],
-                { clamp: true }
-              );
+              if (i === 0) {
+                scrollRange = [0.00, 0.22, 0.28, 1.00];
+                opacityRange = [1, 1, 0, 0];
+                yScrollRange = [0.00, 0.22, 0.28, 1.00];
+                yValueRange = [0, 0, -20, -20];
+              } else if (i === 1) {
+                scrollRange = [0.00, 0.28, 0.36, 0.58, 0.64, 1.00];
+                opacityRange = [0, 0, 1, 1, 0, 0];
+                yScrollRange = [0.00, 0.28, 0.36, 0.58, 0.64, 1.00];
+                yValueRange = [20, 20, 0, 0, -20, -20];
+              } else {
+                scrollRange = [0.00, 0.64, 0.72, 1.00];
+                opacityRange = [0, 0, 1, 1];
+                yScrollRange = [0.00, 0.64, 0.72, 1.00];
+                yValueRange = [20, 20, 0, 0];
+              }
+
+              const panelOpacity = useTransform(scrollYProgress, scrollRange, opacityRange);
+              const panelY = useTransform(scrollYProgress, yScrollRange, yValueRange);
+
+              // Only enable pointerEvents for the active panel to avoid click blockage
+              const isCurrentlyActive = i === 0 
+                ? scrollYProgress.get() < 0.3
+                : i === 1
+                ? scrollYProgress.get() >= 0.3 && scrollYProgress.get() < 0.65
+                : scrollYProgress.get() >= 0.65;
 
               return (
                 <motion.div
@@ -314,7 +325,7 @@ export default function DesignSection() {
                     top: 0,
                     left: 0,
                     right: 0,
-                    pointerEvents: i === 0 ? "auto" : "none", // Prevent click conflicts
+                    pointerEvents: "auto",
                   }}
                 >
                   {/* Tags Container */}
