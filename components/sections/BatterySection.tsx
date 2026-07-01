@@ -1,7 +1,6 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
 const tabsData = [
@@ -9,21 +8,21 @@ const tabsData = [
     id: "translation",
     label: "Live Translation",
     title: "Speak and hear in real time.",
-    image: "/1aaa.jpg",
+    image: "/1aaa.webp",
     description: "With Live Translation, powered by Apple Intelligence, you can listen to people speaking in different languages and hear translations through your AirPods Pro 3. To respond, just speak naturally, and your words will appear in the other person’s language on your iPhone screen. To make the experience even more magical, if you both have AirPods Pro 3, you can each speak in your own language and hear translations through your AirPods.",
   },
   {
     id: "controls",
     label: "Controls",
     title: "Simple gestures. More control.",
-    image: "/2aaa.jpg",
+    image: "/2aaa.webp",
     description: "Simple touch controls let you do things like raise and lower volume, skip tracks, and send “Unknown Caller” straight to voicemail. And the new camera remote feature lets you control your iPhone to record a video or snap a pic, even from afar.",
   },
   {
     id: "connectivity",
     label: "Connectivity",
     title: "Magically effortless setup.",
-    image: "/3aaa.jpg",
+    image: "/3aaa.webp",
     description: "To set up AirPods Pro 3, just place them next to your iPhone and follow the onscreen prompts. Use Automatic Switching to have your AirPods seamlessly connect to whichever device you’re listening to. All you have to do is press play.",
   },
 ];
@@ -32,13 +31,23 @@ export default function BatterySection() {
   const ref = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState("translation");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 991);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
 
-  // Dynamic Parallax vertical shift for the right image
+  // Dynamic Parallax vertical shift for the right image (only active on desktop)
   const imgY = useTransform(scrollYProgress, [0, 1], [-50, 50]);
 
   const currentTab = tabsData.find((t) => t.id === activeTab) || tabsData[0];
@@ -71,7 +80,7 @@ export default function BatterySection() {
         }}
       />
 
-      <div style={{ width: "100%", padding: "0 80px", position: "relative", zIndex: 1 }}>
+      <div className="container" style={{ position: "relative", zIndex: 1 }}>
         {/* ── Section Header (Căn giữa với scroll reveal) ── */}
         <div style={{ textAlign: "center", maxWidth: 720, margin: "0 auto 60px" }}>
           {/* Badge */}
@@ -131,7 +140,7 @@ export default function BatterySection() {
             style={{
               fontSize: "0.95rem",
               lineHeight: 1.6,
-              color: theme === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.6)",
+              color: theme === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0, 0, 0, 0.6)",
               transition: "color 0.3s ease",
               margin: 0,
             }}
@@ -141,25 +150,11 @@ export default function BatterySection() {
         </div>
 
         {/* ── Interactive Content Grid ── */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1.2fr",
-            gap: 60,
-            alignItems: "center",
-            minHeight: 520,
-          }}
-        >
+        <div className="experience-grid">
           {/* Left — Text details corresponding to tab */}
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignSelf: "stretch", paddingTop: 40 }}>
+          <div className="experience-text-side">
             {/* Switcher Buttons (Gạch qua gạch lại, nằm cố định phía trên tiêu đề) */}
-            <div 
-              style={{ 
-                display: "flex", 
-                justifyContent: "flex-start", 
-                marginBottom: 32 
-              }}
-            >
+            <div style={{ display: "flex", justifyContent: "flex-start", marginBottom: 32 }}>
               <div
                 style={{
                   display: "inline-flex",
@@ -252,14 +247,14 @@ export default function BatterySection() {
             </AnimatePresence>
           </div>
 
-          {/* Right — Rounded Rectangular Image wrapping dynamically to image aspect ratio */}
+          {/* Right — Rounded Rectangular Image */}
           <motion.div
             style={{
               width: "100%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              y: imgY,
+              y: isMobile ? 0 : imgY,
             }}
           >
             <AnimatePresence mode="wait">
@@ -294,16 +289,31 @@ export default function BatterySection() {
 
       {/* Responsive styles */}
       <style>{`
+        .experience-grid {
+          display: grid;
+          grid-template-columns: 1fr 1.2fr;
+          gap: 60px;
+          align-items: center;
+          min-height: 520px;
+        }
+        .experience-text-side {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-self: stretch;
+          padding-top: 40px;
+        }
         @media (max-width: 991px) {
-          #experience div[style*="display: grid"] {
+          .experience-grid {
             grid-template-columns: 1fr !important;
             gap: 40px !important;
+            min-height: auto !important;
           }
-          #experience > div:nth-child(2) {
+          .experience-text-side {
+            padding-top: 0px !important;
+          }
+          .container {
             padding: 0 24px !important;
-          }
-          #experience div[style*="height: 520"] {
-            height: 380px !important;
           }
         }
       `}</style>

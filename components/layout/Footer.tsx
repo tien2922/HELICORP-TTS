@@ -1,6 +1,5 @@
 "use client";
 import { motion } from "framer-motion";
-import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -8,18 +7,12 @@ export default function Footer() {
       style={{
         background: "var(--bg-primary)",
         borderTop: "1px solid var(--border-glass)",
-        padding: "60px 0 40px",
+        padding: "80px 0 40px",
+        transition: "background-color 0.3s ease",
       }}
     >
       <div className="container">
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "2fr 1fr 1fr 1fr",
-            gap: 48,
-            marginBottom: 60,
-          }}
-        >
+        <div className="footer-grid">
           {/* Brand */}
           <div>
             <div
@@ -50,7 +43,7 @@ export default function Footer() {
                   fontSize: "1rem",
                 }}
               >
-                AirPods 3
+                AirPods Pro 3
               </span>
             </div>
             <p
@@ -61,8 +54,7 @@ export default function Footer() {
                 maxWidth: 260,
               }}
             >
-              Trải nghiệm âm thanh không dây đỉnh cao với công nghệ Spatial Audio
-              và Adaptive EQ.
+              Experience premium wireless sound with Active Noise Cancellation and Adaptive EQ.
             </p>
           </div>
 
@@ -78,10 +70,10 @@ export default function Footer() {
                 marginBottom: 16,
               }}
             >
-              Sản phẩm
+              Products
             </h4>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
-              {["AirPods 3", "AirPods Pro 2", "AirPods Max", "AirTag"].map((item) => (
+              {["AirPods Pro 3", "AirPods Max", "AirTag", "Accessories"].map((item) => (
                 <li key={item}>
                   <a
                     href="#"
@@ -117,10 +109,10 @@ export default function Footer() {
                 marginBottom: 16,
               }}
             >
-              Hỗ trợ
+              Support
             </h4>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
-              {["Câu hỏi thường gặp", "Bảo hành", "Liên hệ", "Chính sách đổi trả"].map(
+              {["FAQs", "Warranty Support", "Contact Info", "Return Policy"].map(
                 (item) => (
                   <li key={item}>
                     <a
@@ -158,10 +150,10 @@ export default function Footer() {
                 marginBottom: 16,
               }}
             >
-              Pháp lý
+              Legal
             </h4>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
-              {["Điều khoản sử dụng", "Chính sách bảo mật", "Cookie", "Giấy phép"].map(
+              {["Terms of Use", "Privacy Policy", "Cookie Policy", "Licensing"].map(
                 (item) => (
                   <li key={item}>
                     <a
@@ -201,7 +193,7 @@ export default function Footer() {
           }}
         >
           <p style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
-            © 2024 AirPods 3 Landing Page. Được xây dựng với ❤️ bởi Helicorp.
+            © 2026 AirPods Pro 3 Landing Page. Handcrafted by Chi Tien.
           </p>
           <div style={{ display: "flex", gap: 16 }}>
             {["Twitter", "Instagram", "YouTube"].map((social) => (
@@ -231,14 +223,25 @@ export default function Footer() {
 
       {/* Responsive */}
       <style>{`
-        @media (max-width: 768px) {
-          footer [style*="grid-template-columns: 2fr"] {
+        .footer-grid {
+          display: grid;
+          grid-template-columns: 2fr 1fr 1fr 1fr;
+          gap: 48px;
+          margin-bottom: 60px;
+        }
+        @media (max-width: 991px) {
+          .footer-grid {
             grid-template-columns: 1fr 1fr !important;
+            gap: 32px !important;
           }
         }
         @media (max-width: 480px) {
-          footer [style*="grid-template-columns: 2fr"] {
+          .footer-grid {
             grid-template-columns: 1fr !important;
+            gap: 32px !important;
+          }
+          .container {
+            padding: 0 24px !important;
           }
         }
       `}</style>

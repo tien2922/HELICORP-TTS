@@ -43,15 +43,15 @@ const environmentCards = [
       </svg>
     ),
     boldText: "25% more units",
-    prefixText: "Ships in compact packaging for ",
-    suffixText: " per trip.",
+    prefixText: "Shipped with ",
+    suffixText: " per charter flight to cut transportation emissions.",
     highlightColor: "#0ea5e9",
   },
 ];
 
 export default function SpecsSection() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-120px" });
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
   const { theme } = useTheme();
 
   return (
@@ -59,29 +59,32 @@ export default function SpecsSection() {
       id="specs"
       ref={ref}
       style={{
-        background: "var(--bg-secondary)",
-        padding: "160px 0",
+        background: "var(--bg-primary)",
+        padding: "160px 0 120px",
         position: "relative",
         overflow: "hidden",
         transition: "background-color 0.3s ease",
       }}
     >
-      {/* Background grids */}
+      {/* Background decoration */}
       <div
         style={{
           position: "absolute",
-          inset: 0,
-          backgroundImage: theme === "dark"
-            ? `linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px)`
-            : `linear-gradient(rgba(0,0,0,0.01) 1px, transparent 1px)`,
-          backgroundSize: "100% 80px",
+          top: "10%",
+          right: "-10%",
+          width: 500,
+          height: 500,
+          borderRadius: "50%",
+          background: theme === "dark" 
+            ? "radial-gradient(circle, rgba(255,255,255,0.015) 0%, transparent 70%)"
+            : "radial-gradient(circle, rgba(0,0,0,0.01) 0%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
 
-      <div style={{ width: "100%", padding: "0 80px", position: "relative", zIndex: 1 }}>
-        {/* Header (Căn giữa) */}
-        <div style={{ textAlign: "center", maxWidth: 720, margin: "0 auto 80px" }}>
+      <div className="container" style={{ position: "relative", zIndex: 1 }}>
+        {/* Title Block */}
+        <div style={{ textAlign: "center", marginBottom: 80 }}>
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -135,14 +138,7 @@ export default function SpecsSection() {
         </div>
 
         {/* Dynamic 3 Grid Cards */}
-        <div
-          className="specs-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 28,
-          }}
-        >
+        <div className="specs-grid">
           {environmentCards.map((card, i) => (
             <motion.div
               key={i}
@@ -235,6 +231,11 @@ export default function SpecsSection() {
 
       {/* Responsive styles */}
       <style>{`
+        .specs-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 28px;
+        }
         @media (max-width: 991px) {
           .specs-grid {
             grid-template-columns: 1fr !important;

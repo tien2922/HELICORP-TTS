@@ -77,6 +77,8 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
               alignItems: "center",
               gap: 8,
               textDecoration: "none",
+              whiteSpace: "nowrap",
+              flexShrink: 0,
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -101,6 +103,7 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
                 fontSize: "1rem",
                 letterSpacing: "-0.02em",
                 transition: "color 0.3s ease",
+                whiteSpace: "nowrap",
               }}
             >
               AirPods 3
@@ -361,6 +364,17 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <style>{`
+        @media (max-width: 767px) {
+          .hidden.md\\:flex {
+            display: none !important;
+          }
+          nav.hidden.md\\:flex {
+            display: none !important;
+          }
+        }
+      `}</style>
     </>
   );
 }
