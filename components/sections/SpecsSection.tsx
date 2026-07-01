@@ -136,6 +136,7 @@ export default function SpecsSection() {
 
         {/* Dynamic 3 Grid Cards */}
         <div
+          className="specs-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
@@ -178,7 +179,7 @@ export default function SpecsSection() {
               <div
                 style={{
                   color: card.iconColor,
-                  marginBottom: 24,
+                  marginBottom: 20,
                   display: "flex",
                   alignItems: "center",
                 }}
@@ -186,28 +187,28 @@ export default function SpecsSection() {
                 {card.icon}
               </div>
 
-              {/* Middle Section — Content description */}
-              <p
-                style={{
-                  fontSize: "1.15rem",
-                  fontWeight: 600,
-                  lineHeight: 1.45,
-                  color: theme === "dark" ? "#ffffff" : "#1d1d1f",
-                  textAlign: "left",
-                  margin: 0,
-                  paddingRight: 10,
-                  transition: "color 0.3s ease",
-                }}
-              >
-                {card.prefixText}
-                <span style={{ color: card.highlightColor }}>
-                  {card.boldText}
-                </span>
-                {card.suffixText}
-              </p>
+              {/* Bottom Section — Text highlights */}
+              <div style={{ paddingRight: 32, flex: 1, display: "flex", alignItems: "flex-end" }}>
+                <p
+                  style={{
+                    fontSize: "0.95rem",
+                    lineHeight: 1.5,
+                    color: theme === "dark" ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)",
+                    fontFamily: "var(--font)",
+                    textAlign: "left",
+                  }}
+                >
+                  {card.prefixText}
+                  <strong style={{ color: card.highlightColor, fontWeight: 700 }}>
+                    {card.boldText}
+                  </strong>
+                  {card.suffixText}
+                </p>
+              </div>
 
-              {/* Bottom Right — Add Plus Circle action button closer to corner */}
+              {/* Black / White circular + button absolute bottom-right */}
               <div
+                className="plus-btn"
                 style={{
                   position: "absolute",
                   bottom: 24,
@@ -215,7 +216,7 @@ export default function SpecsSection() {
                   width: 32,
                   height: 32,
                   borderRadius: "50%",
-                  background: theme === "dark" ? "#ffffff" : "#000000",
+                  backgroundColor: theme === "dark" ? "#ffffff" : "#000000",
                   color: theme === "dark" ? "#000000" : "#ffffff",
                   display: "flex",
                   alignItems: "center",
@@ -235,7 +236,7 @@ export default function SpecsSection() {
       {/* Responsive styles */}
       <style>{`
         @media (max-width: 991px) {
-          #specs div[style*="grid-template-columns: repeat(3"] {
+          .specs-grid {
             grid-template-columns: 1fr !important;
             gap: 24px !important;
           }
