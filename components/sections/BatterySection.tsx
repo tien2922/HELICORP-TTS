@@ -80,37 +80,26 @@ export default function BatterySection() {
         }}
       />
 
+      {/* Section label */}
+      <div
+        style={{
+          position: "absolute",
+          top: 40,
+          left: "50%",
+          transform: "translateX(-50%)",
+          fontSize: "0.7rem",
+          letterSpacing: "0.2em",
+          textTransform: "uppercase",
+          color: "var(--text-muted)",
+          fontWeight: 600,
+        }}
+      >
+        03 • Experience
+      </div>
+
       <div className="container" style={{ position: "relative", zIndex: 1 }}>
         {/* ── Section Header (Căn giữa với scroll reveal) ── */}
         <div style={{ textAlign: "center", maxWidth: 720, margin: "0 auto 60px" }}>
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6 }}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              padding: "6px 14px",
-              borderRadius: 100,
-              background: theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
-              border: theme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid rgba(0,0,0,0.1)",
-              marginBottom: 20,
-            }}
-          >
-            <span
-              style={{
-                fontSize: "0.72rem",
-                fontWeight: 700,
-                color: theme === "dark" ? "#ffffff" : "#000000",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-              }}
-            >
-              Experience
-            </span>
-          </motion.div>
 
           {/* Headline */}
           <motion.h2
