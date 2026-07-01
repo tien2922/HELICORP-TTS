@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import Link from "next/link";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { Moon, Sun, Menu, X } from "lucide-react";
@@ -18,11 +18,15 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    if (latest > 50) {
+      if (!scrolled) setScrolled(true);
+    } else {
+      if (scrolled) setScrolled(false);
+    }
+  });
 
   const handleNavClick = (href: string) => {
     setMobileOpen(false);
