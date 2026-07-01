@@ -29,6 +29,10 @@ const ContactSection = dynamic(
   () => import("@/components/sections/ContactSection"),
   { ssr: false }
 );
+const Chatbot = dynamic(
+  () => import("@/components/ui/Chatbot"),
+  { ssr: false }
+);
 
 export default function Home() {
   const [isBuyOpen, setIsBuyOpen] = useState(false);
@@ -45,6 +49,9 @@ export default function Home() {
       <SpecsSection />
       <ContactSection />
       <Footer />
+
+      {/* Dynamic Chatbot Assistant */}
+      <Chatbot />
 
       {/* Quick Buy Checkout Modal */}
       <BuyModal 
