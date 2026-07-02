@@ -119,10 +119,10 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
 
           {/* Modal Container */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.9, y: 40 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: "spring", stiffness: 350, damping: 28 }}
+            exit={{ opacity: 0, scale: 0.85, y: 60 }}
+            transition={{ type: "spring", stiffness: 380, damping: 30 }}
             className="checkout-modal-container"
             style={{
               position: "relative",

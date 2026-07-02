@@ -7,6 +7,7 @@ import ScrollProgress from "@/components/ui/ScrollProgress";
 import Footer from "@/components/layout/Footer";
 import BuyModal from "@/components/ui/BuyModal";
 import SectionSkeleton from "@/components/ui/SectionSkeleton";
+import HoverImageCursor from "@/components/ui/HoverImageCursor";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useCart } from "@/components/providers/CartContext";
 
@@ -49,6 +50,7 @@ export default function Home() {
   return (
     <main>
       <ScrollProgress />
+      <HoverImageCursor />
       <Navbar onBuyClick={() => setIsBuyOpen(true)} />
       <HeroSection onBuyClick={() => setIsBuyOpen(true)} />
       <DesignSection />

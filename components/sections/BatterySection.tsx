@@ -254,6 +254,7 @@ export default function BatterySection() {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.45, ease: "easeOut" }}
                 style={{ width: "100%", position: "relative" }}
+                className="battery-image-wrapper"
               >
                 <Image
                   src={currentTab.image}

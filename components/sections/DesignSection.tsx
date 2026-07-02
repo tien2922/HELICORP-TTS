@@ -396,6 +396,7 @@ export default function DesignSection() {
               />
 
               <motion.div
+                className="design-image-container"
                 style={{
                   position: "relative",
                   zIndex: 1,
