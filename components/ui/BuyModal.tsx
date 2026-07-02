@@ -24,6 +24,13 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
   const price = 249;
   const totalPrice = price * quantity;
 
+  const handleInputBlur = () => {
+    // Reset view position to counter virtual keyboard shift bugs on mobile browsers
+    setTimeout(() => {
+      window.scrollTo({ top: window.scrollY, behavior: "instant" });
+    }, 50);
+  };
+
   const handleOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !phone.trim() || !address.trim()) {
@@ -331,6 +338,7 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
                             required
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            onBlur={handleInputBlur}
                             placeholder="Your Full Name"
                             style={{
                               width: "100%",
@@ -338,7 +346,7 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
                               background: theme === "dark" ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)",
                               border: theme === "dark" ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)",
                               borderRadius: 12,
-                              color: theme === "dark" ? "#fff" : "#000",
+                              color: theme === "dark" ? "#ffffff" : "#000000",
                               fontSize: "0.9rem",
                               outline: "none",
                               transition: "border-color 0.2s",
@@ -353,6 +361,7 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
                             required
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
+                            onBlur={handleInputBlur}
                             placeholder="Phone Number"
                             style={{
                               width: "100%",
@@ -360,7 +369,7 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
                               background: theme === "dark" ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)",
                               border: theme === "dark" ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)",
                               borderRadius: 12,
-                              color: theme === "dark" ? "#fff" : "#000",
+                              color: theme === "dark" ? "#ffffff" : "#000000",
                               fontSize: "0.9rem",
                               outline: "none",
                               transition: "border-color 0.2s",
@@ -374,6 +383,7 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
                             required
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
+                            onBlur={handleInputBlur}
                             placeholder="Shipping Address"
                             rows={3}
                             style={{
@@ -382,7 +392,7 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
                               background: theme === "dark" ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)",
                               border: theme === "dark" ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)",
                               borderRadius: 12,
-                              color: theme === "dark" ? "#fff" : "#000",
+                              color: theme === "dark" ? "#ffffff" : "#000000",
                               fontSize: "0.9rem",
                               outline: "none",
                               resize: "none",
