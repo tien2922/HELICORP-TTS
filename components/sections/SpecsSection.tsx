@@ -140,91 +140,101 @@ export default function SpecsSection() {
         {/* Dynamic 3 Grid Cards */}
         <div className="specs-grid">
           {environmentCards.map((card, i) => (
-            <motion.div
+            <div
               key={i}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{
-                duration: 0.8,
-                delay: 0.1 + i * 0.12,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              whileHover={{
-                y: -6,
-                boxShadow: theme === "dark"
-                  ? "0 30px 60px rgba(0, 0, 0, 0.4)"
-                  : "0 30px 60px rgba(0, 0, 0, 0.06)",
-                transition: { type: "spring", stiffness: 400, damping: 25 },
-              }}
               style={{
-                background: theme === "dark" ? "rgba(255, 255, 255, 0.02)" : "rgba(245, 245, 247, 0.65)",
-                border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(0, 0, 0, 0.04)",
-                borderRadius: 24,
-                padding: "36px 32px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                minHeight: 250,
                 position: "relative",
-                cursor: "pointer",
-                transition: "background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease",
+                background: card.highlightColor, // The solid colored 3D plate underneath
+                borderRadius: 24,
+                width: "100%",
+                height: "100%",
               }}
             >
-              {/* Top Section — Icon */}
-              <div
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{
+                  duration: 0.8,
+                  delay: 0.1 + i * 0.12,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                whileHover={{
+                  x: -8,
+                  y: -8,
+                  transition: { type: "spring", stiffness: 450, damping: 25 },
+                }}
                 style={{
-                  color: card.iconColor,
-                  marginBottom: 20,
+                  background: theme === "dark" ? "rgba(20, 20, 20, 0.98)" : "#ffffff",
+                  border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.06)",
+                  borderRadius: 24,
+                  padding: "36px 32px",
                   display: "flex",
-                  alignItems: "center",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  minHeight: 250,
+                  width: "100%",
+                  height: "100%",
+                  position: "relative",
+                  cursor: "pointer",
+                  transition: "background-color 0.3s ease, border-color 0.3s ease",
                 }}
               >
-                {card.icon}
-              </div>
-
-              {/* Bottom Section — Text highlights */}
-              <div style={{ paddingRight: 32, flex: 1, display: "flex", alignItems: "flex-end" }}>
-                <p
+                {/* Top Section — Icon */}
+                <div
                   style={{
-                    fontSize: "0.95rem",
-                    lineHeight: 1.5,
-                    color: theme === "dark" ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)",
-                    fontFamily: "var(--font)",
-                    textAlign: "left",
+                    color: card.iconColor,
+                    marginBottom: 20,
+                    display: "flex",
+                    alignItems: "center",
                   }}
                 >
-                  {card.prefixText}
-                  <strong style={{ color: card.highlightColor, fontWeight: 700 }}>
-                    {card.boldText}
-                  </strong>
-                  {card.suffixText}
-                </p>
-              </div>
+                  {card.icon}
+                </div>
 
-              {/* Black / White circular + button absolute bottom-right */}
-              <div
-                className="plus-btn"
-                style={{
-                  position: "absolute",
-                  bottom: 24,
-                  right: 24,
-                  width: 32,
-                  height: 32,
-                  borderRadius: "50%",
-                  backgroundColor: theme === "dark" ? "#ffffff" : "#000000",
-                  color: theme === "dark" ? "#000000" : "#ffffff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "1.1rem",
-                  fontWeight: "bold",
-                  transition: "transform 0.3s ease, background-color 0.3s ease, color 0.3s ease",
-                }}
-              >
-                +
-              </div>
-            </motion.div>
+                {/* Bottom Section — Text highlights */}
+                <div style={{ paddingRight: 32, flex: 1, display: "flex", alignItems: "flex-end" }}>
+                  <p
+                    style={{
+                      fontSize: "0.95rem",
+                      lineHeight: 1.5,
+                      color: theme === "dark" ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)",
+                      fontFamily: "var(--font)",
+                      textAlign: "left",
+                    }}
+                  >
+                    {card.prefixText}
+                    <strong style={{ color: card.highlightColor, fontWeight: 700 }}>
+                      {card.boldText}
+                    </strong>
+                    {card.suffixText}
+                  </p>
+                </div>
+
+                {/* Black / White circular + button absolute bottom-right */}
+                <div
+                  className="plus-btn"
+                  style={{
+                    position: "absolute",
+                    bottom: 24,
+                    right: 24,
+                    width: 32,
+                    height: 32,
+                    borderRadius: "50%",
+                    backgroundColor: theme === "dark" ? "#ffffff" : "#000000",
+                    color: theme === "dark" ? "#000000" : "#ffffff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1.1rem",
+                    fontWeight: "bold",
+                    transition: "transform 0.3s ease, background-color 0.3s ease, color 0.3s ease",
+                  }}
+                >
+                  +
+                </div>
+              </motion.div>
+            </div>
           ))}
         </div>
       </div>
