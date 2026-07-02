@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, X, Send, Bot, User, Sparkles } from "lucide-react";
+import { MessageSquare, X, Send } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
 interface Message {
@@ -26,9 +26,20 @@ export default function Chatbot() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const { theme } = useTheme();
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkQuery = () => {
+      setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+    };
+    checkQuery();
+    const media = window.matchMedia("(max-width: 768px)");
+    media.addEventListener("change", checkQuery);
+    return () => media.removeEventListener("change", checkQuery);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -84,15 +95,15 @@ export default function Chatbot() {
   };
 
   return (
-    <div style={{ position: "fixed", bottom: 24, right: 24, zIndex: 9999 }}>
+    <div style={{ position: "fixed", bottom: isMobile ? 16 : 24, right: isMobile ? 16 : 24, zIndex: 9999 }}>
       {/* Floating Toggle Button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         style={{
-          width: 56,
-          height: 56,
+          width: 50,
+          height: 50,
           borderRadius: "50%",
           background: theme === "dark" ? "#ffffff" : "#000000",
           color: theme === "dark" ? "#000000" : "#ffffff",
@@ -103,7 +114,7 @@ export default function Chatbot() {
           alignItems: "center",
           boxShadow: theme === "dark" 
             ? "0 10px 30px rgba(255, 255, 255, 0.15)"
-            : "0 10px 30px rgba(0, 0, 0, 0.2)",
+            : "0 10px 30px rgba(0, 0, 0, 0.15)",
           transition: "background-color 0.3s ease, color 0.3s ease",
         }}
       >
@@ -116,7 +127,7 @@ export default function Chatbot() {
               exit={{ rotate: 90, opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              <X size={24} />
+              <X size={20} />
             </motion.div>
           ) : (
             <motion.div
@@ -127,7 +138,7 @@ export default function Chatbot() {
               transition={{ duration: 0.2 }}
               style={{ display: "flex", alignItems: "center" }}
             >
-              <MessageSquare size={24} />
+              <MessageSquare size={20} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -137,66 +148,81 @@ export default function Chatbot() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30, scale: 0.95 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              position: "absolute",
-              bottom: 72,
+            initial={isMobile ? { opacity: 0, y: "100%" } : { opacity: 0, y: 30, scale: 0.95 }}
+            animate={isMobile ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, scale: 1 }}
+            exit={isMobile ? { opacity: 0, y: "100%" } : { opacity: 0, y: 30, scale: 0.95 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            style={isMobile ? {
+              position: "fixed",
+              top: 0,
+              left: 0,
               right: 0,
-              width: "clamp(320px, 90vw, 380px)",
-              height: "min(500px, 80vh)",
-              borderRadius: 24,
+              bottom: 0,
+              width: "100vw",
+              height: "100dvh",
+              background: theme === "dark" ? "#0f0f0f" : "#ffffff",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+              zIndex: 99999,
+            } : {
+              position: "absolute",
+              bottom: 66,
+              right: 0,
+              width: 360,
+              height: 480,
+              borderRadius: 20,
               background: theme === "dark" ? "rgba(20, 20, 20, 0.85)" : "rgba(255, 255, 255, 0.85)",
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
+              backdropFilter: "blur(30px)",
+              WebkitBackdropFilter: "blur(30px)",
               border: theme === "dark" 
-                ? "1px solid rgba(255, 255, 255, 0.12)"
-                : "1px solid rgba(0, 0, 0, 0.08)",
-              boxShadow: "0 20px 50px rgba(0,0,0,0.3)",
+                ? "1px solid rgba(255, 255, 255, 0.08)"
+                : "1px solid rgba(0, 0, 0, 0.06)",
+              boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
               display: "flex",
               flexDirection: "column",
               overflow: "hidden",
             }}
           >
-            {/* Header */}
+            {/* Header (Minimal Apple Style) */}
             <div
               style={{
                 padding: "16px 20px",
                 borderBottom: theme === "dark"
-                  ? "1px solid rgba(255, 255, 255, 0.08)"
-                  : "1px solid rgba(0, 0, 0, 0.06)",
+                  ? "1px solid rgba(255, 255, 255, 0.06)"
+                  : "1px solid rgba(0, 0, 0, 0.05)",
                 display: "flex",
                 alignItems: "center",
-                gap: 12,
+                justifyContent: "space-between",
+                height: 60,
               }}
             >
-              <div
-                style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: "50%",
-                  background: "#3b82f6",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "#fff",
-                }}
-              >
-                <Bot size={20} />
-              </div>
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <span style={{ fontWeight: 700, fontSize: "0.95rem", color: theme === "dark" ? "#fff" : "#000" }}>
-                    AI assistant
-                  </span>
-                  <Sparkles size={12} color="#3b82f6" style={{ fill: "#3b82f6" }} />
-                </div>
-                <span style={{ fontSize: "0.72rem", color: "#3b82f6", fontWeight: 600 }}>
-                  Online • Trực tuyến
+              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <span style={{ fontWeight: 600, fontSize: "0.85rem", letterSpacing: "0.02em", color: theme === "dark" ? "#fff" : "#000" }}>
+                  AI assistant
+                </span>
+                <span style={{ fontSize: "0.68rem", color: "#10b981", fontWeight: 500, display: "flex", alignItems: "center", gap: 4 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10b981", display: "inline-block" }} />
+                  Trực tuyến
                 </span>
               </div>
+
+              {isMobile && (
+                <button
+                  onClick={() => setIsOpen(false)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: theme === "dark" ? "#ffffff" : "#000000",
+                    cursor: "pointer",
+                    padding: 8,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <X size={20} />
+                </button>
+              )}
             </div>
 
             {/* Messages Body */}
@@ -216,42 +242,23 @@ export default function Chatbot() {
                   style={{
                     display: "flex",
                     justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
-                    gap: 8,
-                    alignItems: "flex-end",
                   }}
                 >
-                  {msg.role === "assistant" && (
-                    <div
-                      style={{
-                        width: 28,
-                        height: 28,
-                        borderRadius: "50%",
-                        background: "rgba(59, 130, 246, 0.1)",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        color: "#3b82f6",
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Bot size={16} />
-                    </div>
-                  )}
                   <div
                     style={{
-                      maxWidth: "75%",
-                      padding: "10px 16px",
-                      borderRadius: 18,
-                      fontSize: "0.85rem",
+                      maxWidth: "80%",
+                      padding: "10px 14px",
+                      borderRadius: 16,
+                      fontSize: "0.82rem",
                       lineHeight: 1.45,
                       background: msg.role === "user" 
-                        ? "#3b82f6" 
-                        : theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+                        ? theme === "dark" ? "#ffffff" : "#000000"
+                        : theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
                       color: msg.role === "user"
-                        ? "#ffffff"
-                        : theme === "dark" ? "#ffffff" : "#000000",
-                      border: msg.role === "assistant" 
-                        ? theme === "dark" ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.05)"
+                        ? theme === "dark" ? "#000000" : "#ffffff"
+                        : theme === "dark" ? "#e0e0e0" : "#202020",
+                      border: msg.role === "assistant"
+                        ? theme === "dark" ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0,0,0,0.03)"
                         : "none",
                     }}
                   >
@@ -262,33 +269,17 @@ export default function Chatbot() {
               
               {/* Loader */}
               {isLoading && (
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  <div
-                    style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: "50%",
-                      background: "rgba(59, 130, 246, 0.1)",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      color: "#3b82f6",
-                    }}
-                  >
-                    <Bot size={16} />
-                  </div>
-                  <div style={{ display: "flex", gap: 4 }}>
-                    <div className="dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "#3b82f6", animation: "bounce 1s infinite alternate" }} />
-                    <div className="dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "#3b82f6", animation: "bounce 1s infinite alternate 0.2s" }} style-deps />
-                    <div className="dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "#3b82f6", animation: "bounce 1s infinite alternate 0.4s" }} style-deps />
-                  </div>
+                <div style={{ display: "flex", gap: 4, padding: "8px 12px" }}>
+                  <div className="dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--text-muted)", animation: "bounce 1s infinite alternate" }} />
+                  <div className="dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--text-muted)", animation: "bounce 1s infinite alternate 0.2s" }} style-deps />
+                  <div className="dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--text-muted)", animation: "bounce 1s infinite alternate 0.4s" }} style-deps />
                 </div>
               )}
               
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Quick Replies list (Scrollable horizontally) */}
+            {/* Quick Replies list */}
             {messages.length === 1 && (
               <div
                 style={{
@@ -305,12 +296,12 @@ export default function Chatbot() {
                     key={i}
                     onClick={() => handleSendMessage(reply)}
                     style={{
-                      padding: "6px 14px",
+                      padding: "6px 12px",
                       borderRadius: 100,
-                      background: theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
-                      border: theme === "dark" ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.08)",
-                      color: theme === "dark" ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.8)",
-                      fontSize: "0.75rem",
+                      background: theme === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
+                      border: theme === "dark" ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.05)",
+                      color: theme === "dark" ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)",
+                      fontSize: "0.72rem",
                       fontWeight: 500,
                       cursor: "pointer",
                       fontFamily: "inherit",
@@ -326,13 +317,15 @@ export default function Chatbot() {
             {/* Input Bar */}
             <div
               style={{
-                padding: "16px 20px",
+                padding: "12px 20px",
                 borderTop: theme === "dark"
-                  ? "1px solid rgba(255, 255, 255, 0.08)"
-                  : "1px solid rgba(0, 0, 0, 0.06)",
+                  ? "1px solid rgba(255, 255, 255, 0.06)"
+                  : "1px solid rgba(0, 0, 0, 0.05)",
                 display: "flex",
-                gap: 12,
+                gap: 10,
                 alignItems: "center",
+                background: theme === "dark" ? "#0f0f0f" : "#ffffff",
+                paddingBottom: isMobile ? "calc(12px + env(safe-area-inset-bottom))" : 12,
               }}
             >
               <input
@@ -340,36 +333,35 @@ export default function Chatbot() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSendMessage(input)}
-                placeholder="Hỏi trợ lý AI..."
+                placeholder="Nhập nội dung hỏi..."
                 style={{
                   flex: 1,
-                  padding: "10px 16px",
+                  padding: "10px 14px",
                   borderRadius: 100,
-                  border: theme === "dark" ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(0,0,0,0.1)",
-                  background: theme === "dark" ? "rgba(0,0,0,0.2)" : "rgba(0,0,0,0.02)",
+                  border: theme === "dark" ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.08)",
+                  background: theme === "dark" ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
                   color: theme === "dark" ? "#ffffff" : "#000000",
-                  fontSize: "0.85rem",
+                  fontSize: "0.82rem",
                   outline: "none",
-                  transition: "border-color 0.2s ease",
                 }}
               />
               <button
                 onClick={() => handleSendMessage(input)}
                 style={{
-                  width: 36,
-                  height: 36,
+                  width: 32,
+                  height: 32,
                   borderRadius: "50%",
-                  background: "#3b82f6",
-                  color: "#ffffff",
+                  background: theme === "dark" ? "#ffffff" : "#000000",
+                  color: theme === "dark" ? "#000000" : "#ffffff",
                   border: "none",
                   cursor: "pointer",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  boxShadow: "0 4px 10px rgba(59,130,246,0.3)",
+                  flexShrink: 0,
                 }}
               >
-                <Send size={16} />
+                <Send size={14} />
               </button>
             </div>
           </motion.div>
@@ -379,7 +371,7 @@ export default function Chatbot() {
       <style>{`
         @keyframes bounce {
           0% { transform: translateY(0); }
-          100% { transform: translateY(-6px); }
+          100% { transform: translateY(-4px); }
         }
       `}</style>
     </div>
