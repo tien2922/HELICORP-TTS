@@ -13,13 +13,30 @@ interface BuyModalProps {
 
 const WEBHOOK_ORDER_URL = "https://httpbin.org/post"; // Simulate order processing
 
+import { useCart } from "@/components/providers/CartContext";
+import { useEffect } from "react";
+
 export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
+  const { cartCount, setCartCount } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [ordered, setOrdered] = useState(false);
+
+  // Sync initial quantity with global cartCount when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setQuantity(Math.max(1, cartCount));
+    }
+  }, [isOpen, cartCount]);
+
+  // Sync back to cartCount when quantity changes
+  const updateQuantity = (newQty: number) => {
+    setQuantity(newQty);
+    setCartCount(newQty);
+  };
 
   const price = 249;
   const totalPrice = price * quantity;
@@ -299,7 +316,7 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
                           >
                             <button
                               type="button"
-                              onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                              onClick={() => updateQuantity(Math.max(1, quantity - 1))}
                               style={{
                                 background: "none",
                                 border: "none",
@@ -316,7 +333,7 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
                             </span>
                             <button
                               type="button"
-                              onClick={() => setQuantity(q => q + 1)}
+                              onClick={() => updateQuantity(quantity + 1)}
                               style={{
                                 background: "none",
                                 border: "none",

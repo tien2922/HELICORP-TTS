@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import Link from "next/link";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { useCart } from "@/components/providers/CartContext";
 import { Moon, Sun, Menu, X } from "lucide-react";
 
 const navLinks = [
@@ -17,6 +18,7 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const { cartCount, isFavorite, toggleWishlist } = useCart();
 
   const { scrollY } = useScroll();
 
@@ -37,164 +39,209 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
   return (
     <>
       <motion.header
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
         style={{
           position: "fixed",
           top: 0,
           left: 0,
           right: 0,
+          height: 64,
           zIndex: 1000,
-          padding: "0 24px",
-          transition: "all 0.3s ease",
-          background: scrolled
-            ? theme === "dark"
-              ? "rgba(0,0,0,0.8)"
-              : "rgba(255,255,255,0.8)"
+          display: "flex",
+          alignItems: "center",
+          background: scrolled 
+            ? (theme === "dark" ? "rgba(10, 10, 10, 0.75)" : "rgba(255, 255, 255, 0.75)")
             : "transparent",
           backdropFilter: scrolled ? "blur(20px)" : "none",
           WebkitBackdropFilter: scrolled ? "blur(20px)" : "none",
           borderBottom: scrolled
-            ? theme === "dark"
-              ? "1px solid rgba(255,255,255,0.12)"
-              : "1px solid rgba(0,0,0,0.08)"
-            : "none",
+            ? (theme === "dark" ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.05)")
+            : "1px solid transparent",
+          transition: "background-color 0.3s ease, border-color 0.3s ease",
         }}
       >
-        <div
-          style={{
-            maxWidth: 1600,
-            margin: "0 auto",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            height: 64,
-            width: "100%",
-          }}
-        >
-          {/* Logo */}
-          <Link
-            href="/"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
+        <div className="container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "0 24px" }}>
+          {/* Logo / Brand */}
+          <Link 
+            href="#" 
+            onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+            style={{ 
+              display: "flex", 
+              alignItems: "center", 
+              gap: 8, 
               textDecoration: "none",
-              whiteSpace: "nowrap",
-              flexShrink: 0,
+              color: "var(--text-primary)"
             }}
           >
-            <svg
-              viewBox="0 0 170 170"
-              width={20}
-              height={20}
-              style={{
-                fill: theme === "dark" ? "#ffffff" : "#000000",
-                transition: "fill 0.3s ease",
-                flexShrink: 0,
+            {/* Apple Logo SVG */}
+            <svg 
+              viewBox="0 0 170 170" 
+              style={{ 
+                width: 18, 
+                height: 18, 
+                fill: "var(--text-primary)",
+                transition: "fill 0.3s ease" 
               }}
             >
-              <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.34.13-9.13-1.92-14.37-6.07-3.62-2.9-7.47-7.7-11.56-14.42C25.8 126.96 16.59 105.74 16.59 84.91c0-14.93 3.65-27.18 10.96-36.74 7.3-9.56 16.29-14.46 26.96-14.68 5.02 0 10.59 1.62 16.7 4.88 6.13 3.25 10.43 4.88 12.91 4.88 2.01 0 6.17-1.5 12.48-4.52 6.31-3.01 11.87-4.48 16.7-4.39 12.67.51 22.56 5.21 29.67 14.1-10.72 6.53-15.98 15.63-15.78 27.27.2 9.17 3.74 16.89 10.62 23.16 6.87 6.27 15.11 9.77 24.71 10.52-2.12 6.34-5.26 13.54-9.45 20.86zm-15.12-108.5c-.09 7.9-2.98 14.91-8.68 21.03-5.69 6.12-12.74 9.7-21.15 10.74.18-7.36 2.92-14.28 8.23-20.76 5.3-6.48 12.35-10.42 21.15-11.8.27.27.4.49.45.79z" />
+              <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.34.13-9.13-1.92-14.37-6.15-3.61-2.92-7.53-7.7-11.75-14.36-9.19-14.64-13.79-28.53-13.79-41.68 0-12.54 3.15-22.92 9.45-31.14 6.3-8.22 14.18-12.33 23.64-12.33 4.8 0 10.14 1.25 16 3.75 5.88 2.5 9.5 3.75 10.88 3.75 1.5 0 5.31-1.35 11.44-4.04 6.12-2.69 11.43-3.95 15.93-3.77 15.54.91 27.24 6.78 35.1 17.6-12.87 7.82-19.16 18.43-18.89 31.84.27 10.27 4.1 18.73 11.51 25.37 7.41 6.64 16.03 10.24 25.86 10.81 1.05 4.67 2.1 9.35 3.15 14.02zM119.22 32.4c0-7.72 2.76-14.88 8.27-21.49 5.51-6.61 12.34-10.49 20.49-11.66.16 8.01-2.48 15.35-7.92 22.02-5.44 6.67-12.44 10.74-21 12.22.11-.36.16-.73.16-1.09z" />
             </svg>
-            <span
-              style={{
-                color: theme === "dark" ? "#ffffff" : "#000000",
-                fontWeight: 700,
-                fontSize: "1rem",
-                letterSpacing: "-0.02em",
-                transition: "color 0.3s ease",
-                whiteSpace: "nowrap",
-              }}
-            >
-              AirPods 3
-            </span>
+            <span style={{ fontWeight: 600, fontSize: "0.95rem", letterSpacing: "-0.01em" }}>AirPods 3</span>
           </Link>
-
-          {/* Right Area: Nav Links + Actions (Shifting tightly to the right) */}
-          <div style={{ display: "flex", alignItems: "center", gap: 24, marginLeft: "auto" }}>
-            {/* Desktop Nav (Moved to right) */}
-            <nav
-              style={{
-                display: "flex",
-                gap: 24,
-                listStyle: "none",
-                alignItems: "center",
-              }}
-              className="hidden md:flex"
-            >
-              {navLinks.map((link) => (
-                <button
-                  key={link.href}
-                  onClick={() => handleNavClick(link.href)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: theme === "dark" ? "#ffffff" : "#000000",
-                    opacity: 0.75,
-                    fontSize: "0.825rem",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    transition: "opacity 0.25s ease, color 0.25s ease",
-                    fontFamily: "var(--font)",
-                  }}
-                  onMouseEnter={(e) =>
-                    ((e.target as HTMLElement).style.opacity = "1")
-                  }
-                  onMouseLeave={(e) =>
-                    ((e.target as HTMLElement).style.opacity = "0.75")
-                  }
-                >
-                  {link.label}
-                </button>
-              ))}
-            </nav>
-
-             {/* Actions */}
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              {/* Premium Switch Toggle for Dark/Light Mode (hidden on mobile, shown on desktop) */}
+ 
+          {/* Navigation Links (desktop) */}
+          <nav className="hidden md:flex" style={{ display: "flex", alignItems: "center", gap: 32 }}>
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(link.href);
+                }}
+                className="nav-link-item"
+                style={{
+                  fontSize: "0.8rem",
+                  fontWeight: 500,
+                  color: "var(--text-secondary)",
+                  textDecoration: "none",
+                  letterSpacing: "0.01em",
+                  transition: "color 0.25s ease",
+                }}
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+ 
+          {/* Actions Menu */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              
+              {/* Theme Switcher Toggle */}
               <div
                 onClick={toggleTheme}
-                className="hidden md:flex"
                 style={{
-                  width: 52,
-                  height: 28,
+                  width: 44,
+                  height: 24,
                   borderRadius: 100,
                   background: theme === "dark" ? "#000000" : "#ffffff",
                   border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.2)" : "1px solid rgba(0, 0, 0, 0.15)",
                   display: "flex",
                   alignItems: "center",
-                  padding: "0 4px",
+                  padding: "0 2px",
                   cursor: "pointer",
                   position: "relative",
-                  transition: "background 0.3s ease, border-color 0.3s ease",
+                  transition: "background-color 0.3s ease",
                 }}
               >
                 <motion.div
                   layout
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   style={{
-                    width: 20,
-                    height: 20,
+                    width: 18,
+                    height: 18,
                     borderRadius: "50%",
                     background: theme === "dark" ? "#ffffff" : "#000000",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
                     position: "absolute",
-                    left: theme === "dark" ? "auto" : 4,
-                    right: theme === "dark" ? 4 : "auto",
-                    transition: "background 0.3s ease",
+                    left: theme === "dark" ? "auto" : 2,
+                    right: theme === "dark" ? 2 : "auto",
                   }}
                 >
                   {theme === "dark" ? (
-                    <Moon size={11} color="#000000" />
+                    <Moon size={10} color="#000000" />
                   ) : (
-                    <Sun size={11} color="#ffffff" />
+                    <Sun size={10} color="#ffffff" />
                   )}
                 </motion.div>
               </div>
+
+              {/* Wishlist Heart SVG Button (desktop) */}
+              <motion.button
+                onClick={toggleWishlist}
+                whileTap={{ scale: 0.9 }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  padding: 4,
+                  color: isFavorite ? "#ef4444" : "var(--text-secondary)",
+                }}
+                title="Yêu thích"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  style={{
+                    width: 18,
+                    height: 18,
+                    fill: isFavorite ? "#ef4444" : "none",
+                    stroke: isFavorite ? "#ef4444" : "var(--text-secondary)",
+                    strokeWidth: 2,
+                    transition: "fill 0.2s, stroke 0.2s",
+                  }}
+                >
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+              </motion.button>
+
+              {/* Cart Bag SVG Button (desktop) */}
+              <motion.button
+                onClick={onBuyClick}
+                whileTap={{ scale: 0.9 }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  padding: 4,
+                  position: "relative",
+                  color: "var(--text-secondary)",
+                }}
+                title="Giỏ hàng"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  style={{
+                    width: 18,
+                    height: 18,
+                    fill: "none",
+                    stroke: "var(--text-secondary)",
+                    strokeWidth: 2,
+                  }}
+                >
+                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0" />
+                </svg>
+                {cartCount > 0 && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: -2,
+                      right: -4,
+                      background: "#ef4444",
+                      color: "#ffffff",
+                      fontSize: "0.6rem",
+                      fontWeight: 700,
+                      borderRadius: "50%",
+                      width: 13,
+                      height: 13,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      border: theme === "dark" ? "1px solid #000000" : "1px solid #ffffff",
+                    }}
+                  >
+                    {cartCount}
+                  </span>
+                )}
+              </motion.button>
 
               {/* CTA Button (desktop) */}
               <button 
@@ -343,6 +390,111 @@ export default function Navbar({ onBuyClick }: { onBuyClick: () => void }) {
                     )}
                   </motion.div>
                 </div>
+              </div>
+
+              {/* Mobile Wishlist & Cart Toggles */}
+              <div 
+                style={{ 
+                  display: "flex", 
+                  justifyContent: "space-between", 
+                  alignItems: "center",
+                  padding: "16px 0",
+                  borderBottom: theme === "dark" ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0,0,0,0.04)",
+                }}
+              >
+                <span style={{ fontSize: "1rem", fontWeight: 500, color: "var(--text-secondary)" }}>
+                  Sản phẩm yêu thích
+                </span>
+                <motion.button
+                  onClick={toggleWishlist}
+                  whileTap={{ scale: 0.9 }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    padding: 8,
+                  }}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    style={{
+                      width: 22,
+                      height: 22,
+                      fill: isFavorite ? "#ef4444" : "none",
+                      stroke: isFavorite ? "#ef4444" : "var(--text-secondary)",
+                      strokeWidth: 2,
+                    }}
+                  >
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                  </svg>
+                </motion.button>
+              </div>
+
+              <div 
+                style={{ 
+                  display: "flex", 
+                  justifyContent: "space-between", 
+                  alignItems: "center",
+                  padding: "16px 0",
+                  borderBottom: theme === "dark" ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0,0,0,0.04)",
+                }}
+              >
+                <span style={{ fontSize: "1rem", fontWeight: 500, color: "var(--text-secondary)" }}>
+                  Giỏ hàng của bạn
+                </span>
+                <motion.button
+                  onClick={() => {
+                    setMobileOpen(false);
+                    onBuyClick();
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    padding: 8,
+                    position: "relative",
+                  }}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    style={{
+                      width: 22,
+                      height: 22,
+                      fill: "none",
+                      stroke: "var(--text-secondary)",
+                      strokeWidth: 2,
+                    }}
+                  >
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0" />
+                  </svg>
+                  {cartCount > 0 && (
+                    <span
+                      style={{
+                        position: "absolute",
+                        top: 2,
+                        right: 0,
+                        background: "#ef4444",
+                        color: "#ffffff",
+                        fontSize: "0.65rem",
+                        fontWeight: 700,
+                        borderRadius: "50%",
+                        width: 15,
+                        height: 15,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "1px solid var(--bg-primary)",
+                      }}
+                    >
+                      {cartCount}
+                    </span>
+                  )}
+                </motion.button>
               </div>
 
               <button

@@ -86,6 +86,9 @@ const jsonLd = {
   },
 };
 
+import { CartProvider } from "@/components/providers/CartContext";
+import { TrackerProvider } from "@/components/providers/TrackerProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -112,29 +115,33 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <ThemeProvider>
-          <LenisProvider>
-            {children}
-            <Toaster
-              position="bottom-right"
-              toastOptions={{
-                duration: 4000,
-                style: {
-                  background: "#111111",
-                  color: "#ffffff",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: "12px",
-                  padding: "16px",
-                  fontSize: "14px",
-                },
-                success: {
-                  iconTheme: { primary: "#3b82f6", secondary: "#ffffff" },
-                },
-                error: {
-                  iconTheme: { primary: "#ef4444", secondary: "#ffffff" },
-                },
-              }}
-            />
-          </LenisProvider>
+          <TrackerProvider>
+            <CartProvider>
+              <LenisProvider>
+                {children}
+                <Toaster
+                  position="bottom-right"
+                  toastOptions={{
+                    duration: 4000,
+                    style: {
+                      background: "#111111",
+                      color: "#ffffff",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: "12px",
+                      padding: "16px",
+                      fontSize: "14px",
+                    },
+                    success: {
+                      iconTheme: { primary: "#3b82f6", secondary: "#ffffff" },
+                    },
+                    error: {
+                      iconTheme: { primary: "#ef4444", secondary: "#ffffff" },
+                    },
+                  }}
+                />
+              </LenisProvider>
+            </CartProvider>
+          </TrackerProvider>
         </ThemeProvider>
       </body>
     </html>

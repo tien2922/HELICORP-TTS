@@ -1,33 +1,35 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
 import HeroSection from "@/components/sections/HeroSection";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import Footer from "@/components/layout/Footer";
 import BuyModal from "@/components/ui/BuyModal";
+import SectionSkeleton from "@/components/ui/SectionSkeleton";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { useCart } from "@/components/providers/CartContext";
 
-// Lazy load heavy sections for performance
+// Lazy load heavy sections with animated skeleton loaders
 const DesignSection = dynamic(
   () => import("@/components/sections/DesignSection"),
-  { ssr: false }
+  { ssr: false, loading: () => <SectionSkeleton /> }
 );
 const AudioSection = dynamic(
   () => import("@/components/sections/AudioSection"),
-  { ssr: false }
+  { ssr: false, loading: () => <SectionSkeleton /> }
 );
 const BatterySection = dynamic(
   () => import("@/components/sections/BatterySection"),
-  { ssr: false }
+  { ssr: false, loading: () => <SectionSkeleton /> }
 );
 const SpecsSection = dynamic(
   () => import("@/components/sections/SpecsSection"),
-  { ssr: false }
+  { ssr: false, loading: () => <SectionSkeleton /> }
 );
 const ContactSection = dynamic(
   () => import("@/components/sections/ContactSection"),
-  { ssr: false }
+  { ssr: false, loading: () => <SectionSkeleton /> }
 );
 const Chatbot = dynamic(
   () => import("@/components/ui/Chatbot"),
@@ -37,6 +39,12 @@ const Chatbot = dynamic(
 export default function Home() {
   const [isBuyOpen, setIsBuyOpen] = useState(false);
   const { theme } = useTheme();
+  const { logViewProduct } = useCart();
+
+  // Log product view when user lands on home page
+  useEffect(() => {
+    logViewProduct("AirPods Pro 3");
+  }, []);
 
   return (
     <main>
