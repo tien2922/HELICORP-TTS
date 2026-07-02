@@ -115,9 +115,10 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
               fontFamily: "var(--font)",
             }}
           >
-            {/* Close button */}
+             {/* Close button - Fixed on mobile to stay on top, absolute on desktop */}
             <button
               onClick={onClose}
+              className="checkout-close-btn"
               style={{
                 position: "absolute",
                 top: 20,
@@ -132,7 +133,7 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
                 justifyContent: "center",
                 cursor: "pointer",
                 color: theme === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.6)",
-                zIndex: 10,
+                zIndex: 100,
                 transition: "all 0.2s",
               }}
               onMouseEnter={(e) => (e.currentTarget.style.color = theme === "dark" ? "#fff" : "#000")}
@@ -181,7 +182,7 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
                 </div>
 
                 {/* Product Image */}
-                <div style={{ position: "relative", width: "100%", height: 160, margin: "16px 0" }}>
+                <div className="checkout-product-img-wrapper">
                   <Image
                     src="/airpods-hero copy.webp"
                     alt="AirPods Pro 3"
@@ -445,11 +446,25 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
           display: grid;
           grid-template-columns: 1fr 1.1fr;
         }
+        .checkout-product-img-wrapper {
+          position: relative;
+          width: 100%;
+          height: 160px;
+          margin: 16px 0;
+        }
         @media (max-width: 767px) {
           .checkout-modal-container {
-            max-height: calc(100vh - 32px);
+            max-height: 90dvh !important;
             overflow-y: auto !important;
-            border-radius: 20px !important;
+            border-radius: 24px !important;
+            width: 95vw !important;
+          }
+          .checkout-close-btn {
+            position: fixed !important;
+            top: 24px !important;
+            right: 24px !important;
+            background: ${theme === "dark" ? "rgba(0,0,0,0.6) !important" : "rgba(255,255,255,0.8) !important"};
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
           }
           .checkout-grid {
             grid-template-columns: 1fr !important;
@@ -457,10 +472,14 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
           .checkout-product-side {
             border-right: none !important;
             border-bottom: 1px solid ${theme === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"};
-            padding: 32px 24px 20px !important;
+            padding: 32px 24px 16px !important;
+          }
+          .checkout-product-img-wrapper {
+            height: 120px !important;
+            margin: 8px 0 !important;
           }
           .checkout-form-side {
-            padding: 24px 24px 32px !important;
+            padding: 20px 24px 24px !important;
           }
         }
       `}</style>
