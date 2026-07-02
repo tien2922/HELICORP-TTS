@@ -122,20 +122,19 @@ export default function RootLayout({
                 <Toaster
                   position="bottom-right"
                   toastOptions={{
-                    duration: 4000,
+                    duration: 3000,
                     style: {
-                      background: "#111111",
-                      color: "#ffffff",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      borderRadius: "12px",
-                      padding: "16px",
-                      fontSize: "14px",
-                    },
-                    success: {
-                      iconTheme: { primary: "#3b82f6", secondary: "#ffffff" },
-                    },
-                    error: {
-                      iconTheme: { primary: "#ef4444", secondary: "#ffffff" },
+                      background: "var(--bg-glass)",
+                      backdropFilter: "blur(20px)",
+                      WebkitBackdropFilter: "blur(20px)",
+                      color: "var(--text-primary)",
+                      border: "1px solid var(--border-glass)",
+                      borderRadius: "20px",
+                      padding: "12px 24px",
+                      fontSize: "0.85rem",
+                      fontWeight: 500,
+                      boxShadow: "0 12px 30px rgba(0, 0, 0, 0.15)",
+                      fontFamily: "var(--font)",
                     },
                   }}
                 />
