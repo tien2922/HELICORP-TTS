@@ -8,11 +8,9 @@ export default function HoverImageCursor() {
   const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
-    // Detect mobile touch devices or small screens to prevent running any logic
+    // Detect mobile small screens to protect PageSpeed score
     const checkIsMobile = () => {
-      const mobileWidth = window.innerWidth < 768;
-      const touchDevice = window.matchMedia("(pointer: coarse)").matches;
-      setIsMobile(mobileWidth || touchDevice);
+      setIsMobile(window.innerWidth < 768);
     };
 
     checkIsMobile();
@@ -30,32 +28,33 @@ export default function HoverImageCursor() {
 
     // Find and attach listeners to image wrappers/containers
     const handleMouseEnter = (e: MouseEvent) => {
-      const target = e.currentTarget as HTMLElement;
-      const img = target.querySelector("img");
+      const img = e.currentTarget as HTMLImageElement;
       if (img && img.src) {
         setHoveredImage(img.src);
         // Hide default cursor
-        target.style.cursor = "none";
+        img.style.cursor = "none";
       }
     };
 
     const handleMouseLeave = (e: MouseEvent) => {
-      const target = e.currentTarget as HTMLElement;
+      const img = e.currentTarget as HTMLImageElement;
       setHoveredImage(null);
-      target.style.cursor = "";
+      img.style.cursor = "";
     };
 
     // Listen to mouse coordinates globally
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
-    // Find all sections/components containing product images
+    // Target all images in content sections
     const imageElements = document.querySelectorAll(
-      ".hero-image-wrapper, .design-image-container, .battery-image-wrapper, .checkout-product-img-wrapper"
+      "section img, .design-glass-card img, .checkout-product-img-wrapper img"
     );
 
     imageElements.forEach((el) => {
       el.addEventListener("mouseenter", handleMouseEnter as any);
       el.addEventListener("mouseleave", handleMouseLeave as any);
+      // Ensure cursor none stylesheet applies on hover
+      (el as HTMLElement).style.cursor = "none";
     });
 
     return () => {
