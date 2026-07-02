@@ -73,7 +73,7 @@ export default function HoverImageCursor() {
               borderRadius: "20px",
               pointerEvents: "none",
               zIndex: 99999,
-              transform: "translate3d(calc(var(--cursor-x, 0px) + 20px), calc(var(--cursor-y, 0px) + 20px), 0)",
+              transform: "translate3d(calc(var(--cursor-x, 0px) - 110px), calc(var(--cursor-y, 0px) - 70px), 0)",
               willChange: "transform",
               boxShadow: theme === "dark" 
                 ? "0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(59, 130, 246, 0.15)"
