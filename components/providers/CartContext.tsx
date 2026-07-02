@@ -45,7 +45,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("helicorp_cart_count", next.toString());
       return next;
     });
-    toast.success(`🛒 Đã thêm AirPods Pro 3 vào giỏ hàng!`);
+    toast("Đã thêm AirPods Pro 3 vào giỏ hàng!", {
+      icon: "🛒",
+    });
   };
 
   const toggleWishlist = () => {
@@ -53,9 +55,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const next = !prev;
       localStorage.setItem("helicorp_fav_status", next.toString());
       if (next) {
-        toast.success("❤️ Đã lưu AirPods Pro 3 vào danh sách yêu thích!");
+        toast("Đã lưu AirPods Pro 3 vào danh sách yêu thích!", {
+          icon: "❤️",
+        });
       } else {
-        toast.success("🤍 Đã bỏ yêu thích AirPods Pro 3.");
+        toast("Đã bỏ yêu thích AirPods Pro 3.", {
+          icon: "🤍",
+        });
       }
       return next;
     });
