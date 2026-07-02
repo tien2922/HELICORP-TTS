@@ -33,7 +33,7 @@ export default function HoverImageCursor() {
 
     // Target content images
     const imageElements = document.querySelectorAll(
-      ".experience-grid img, .design-glass-card img, .checkout-product-img-wrapper img"
+      "section img, .design-image-side img, .checkout-product-img-wrapper img, .experience-grid img, .battery-image-wrapper img"
     );
 
     imageElements.forEach((el) => {
@@ -85,7 +85,7 @@ export default function HoverImageCursor() {
             }}
           />
           <style>{`
-            .experience-grid img, .design-glass-card img, .checkout-product-img-wrapper img {
+            section img, .design-image-side img, .checkout-product-img-wrapper img, .experience-grid img, .battery-image-wrapper img {
               cursor: none !important;
             }
           `}</style>

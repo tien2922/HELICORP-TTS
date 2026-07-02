@@ -58,7 +58,6 @@ export default function Home() {
       <BatterySection />
       <SpecsSection />
       <ContactSection />
-      <Footer />
 
       {/* Dynamic Chatbot Assistant */}
       <Chatbot />
@@ -69,6 +68,7 @@ export default function Home() {
         onClose={() => setIsBuyOpen(false)} 
         theme={theme}
       />
+      <Footer />
     </main>
   );
 }
