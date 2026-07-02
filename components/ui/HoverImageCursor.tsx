@@ -9,47 +9,41 @@ export default function HoverImageCursor() {
   const [hoveredImage, setHoveredImage] = useState<string | null>(null);
 
   useEffect(() => {
+    if (window.innerWidth < 768) return;
+
     // Track mouse coordinates using CSS custom variables
     const handleMouseMove = (e: MouseEvent) => {
-      if (window.innerWidth < 768) return;
       document.documentElement.style.setProperty("--cursor-x", `${e.clientX}px`);
       document.documentElement.style.setProperty("--cursor-y", `${e.clientY}px`);
-    };
 
-    const handleMouseEnter = (e: MouseEvent) => {
-      if (window.innerWidth < 768) return;
-      const img = e.currentTarget as HTMLImageElement;
-      if (img && img.src) {
-        setHoveredImage(img.src);
+      // Find the element currently under the cursor
+      const target = e.target as HTMLElement;
+      if (target) {
+        // Find nearest img tag inside or if the target itself is an img
+        const img = target.tagName === "IMG" ? (target as HTMLImageElement) : target.closest("img");
+        if (img && img.src && !img.closest(".navbar-logo") && !img.closest(".footer-logo")) {
+          setHoveredImage(img.src);
+          img.style.setProperty("cursor", "none", "important");
+          if (img.parentElement) {
+            img.parentElement.style.setProperty("cursor", "none", "important");
+          }
+        } else {
+          setHoveredImage(null);
+        }
       }
     };
 
-    const handleMouseLeave = () => {
+    const handleMouseLeaveGlobal = () => {
       setHoveredImage(null);
     };
 
-    // Listen to mouse coordinates globally
+    // Listen to mouse coordinates and hover targets globally
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
-
-    // Target content images
-    const imageElements = document.querySelectorAll(
-      "section img, .design-image-side img, .checkout-product-img-wrapper img, .experience-grid img, .battery-image-wrapper img"
-    );
-
-    imageElements.forEach((el) => {
-      el.addEventListener("mouseenter", handleMouseEnter as any);
-      el.addEventListener("mouseleave", handleMouseLeave as any);
-      // Apply cursor none styles natively
-      (el as HTMLElement).style.setProperty("cursor", "none", "important");
-    });
+    document.addEventListener("mouseleave", handleMouseLeaveGlobal);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      imageElements.forEach((el) => {
-        el.removeEventListener("mouseenter", handleMouseEnter as any);
-        el.removeEventListener("mouseleave", handleMouseLeave as any);
-        (el as HTMLElement).style.cursor = "";
-      });
+      document.removeEventListener("mouseleave", handleMouseLeaveGlobal);
     };
   }, []);
 
@@ -86,6 +80,9 @@ export default function HoverImageCursor() {
           />
           <style>{`
             section img, .design-image-side img, .checkout-product-img-wrapper img, .experience-grid img, .battery-image-wrapper img {
+              cursor: none !important;
+            }
+            main img {
               cursor: none !important;
             }
           `}</style>
