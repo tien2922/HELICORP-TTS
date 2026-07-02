@@ -189,7 +189,7 @@ export default function Chatbot() {
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <span style={{ fontWeight: 700, fontSize: "0.95rem", color: theme === "dark" ? "#fff" : "#000" }}>
-                    Helicorp AI Assistant
+                    AI assistant
                   </span>
                   <Sparkles size={12} color="#3b82f6" style={{ fill: "#3b82f6" }} />
                 </div>
