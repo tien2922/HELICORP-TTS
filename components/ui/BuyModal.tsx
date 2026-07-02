@@ -89,10 +89,8 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div
-          style={{
+    <div
+      style={{
             position: "fixed",
             inset: 0,
             zIndex: 9999,
@@ -467,8 +465,6 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
             </div>
           </div>
           </motion.div>
-        </div>
-      )}
 
       {/* Embedded CSS rules for modal responsiveness */}
       <style>{`
@@ -523,6 +519,6 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
           }
         }
       `}</style>
-    </AnimatePresence>
+    </div>
   );
 }

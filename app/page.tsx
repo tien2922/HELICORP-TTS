@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { AnimatePresence } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import HeroSection from "@/components/sections/HeroSection";
 import ScrollProgress from "@/components/ui/ScrollProgress";
@@ -63,11 +64,15 @@ export default function Home() {
       <Chatbot />
 
       {/* Quick Buy Checkout Modal */}
-      <BuyModal 
-        isOpen={isBuyOpen} 
-        onClose={() => setIsBuyOpen(false)} 
-        theme={theme}
-      />
+      <AnimatePresence>
+        {isBuyOpen && (
+          <BuyModal 
+            isOpen={isBuyOpen} 
+            onClose={() => setIsBuyOpen(false)} 
+            theme={theme}
+          />
+        )}
+      </AnimatePresence>
       <Footer />
     </main>
   );

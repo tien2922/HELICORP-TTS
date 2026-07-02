@@ -52,32 +52,46 @@ export default function HoverImageCursor() {
       {hoveredImage && (
         <>
           <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0 }}
-            transition={{ type: "spring", stiffness: 450, damping: 28 }}
+            initial={{ opacity: 0, scale: 0.7, y: 15 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.7, y: 15 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
             style={{
               position: "fixed",
               top: 0,
               left: 0,
-              width: 80,
-              height: 80,
-              backgroundImage: `url(${hoveredImage})`,
-              backgroundSize: "contain",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.25)",
-              backdropFilter: "blur(12px)",
-              WebkitBackdropFilter: "blur(12px)",
-              border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.2)" : "1px solid rgba(0, 0, 0, 0.12)",
-              borderRadius: "16px",
+              width: 220,
+              height: 140,
+              padding: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: theme === "dark" ? "rgba(30, 30, 30, 0.75)" : "rgba(255, 255, 255, 0.85)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+              borderRadius: "20px",
               pointerEvents: "none",
               zIndex: 99999,
-              transform: "translate3d(calc(var(--cursor-x, 0px) - 40px), calc(var(--cursor-y, 0px) - 40px), 0)",
+              transform: "translate3d(calc(var(--cursor-x, 0px) + 20px), calc(var(--cursor-y, 0px) + 20px), 0)",
               willChange: "transform",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
+              boxShadow: theme === "dark" 
+                ? "0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(59, 130, 246, 0.15)"
+                : "0 25px 50px -12px rgba(0, 0, 0, 0.18)",
             }}
-          />
+          >
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                backgroundImage: `url(${hoveredImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                borderRadius: "14px",
+              }}
+            />
+          </motion.div>
           <style>{`
             section img, .design-image-side img, .checkout-product-img-wrapper img, .experience-grid img, .battery-image-wrapper img {
               cursor: none !important;
