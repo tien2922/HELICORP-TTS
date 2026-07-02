@@ -115,15 +115,15 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
               fontFamily: "var(--font)",
             }}
           >
-             {/* Close button - Fixed on mobile to stay on top, absolute on desktop */}
+             {/* Close button - Kept absolute for perfect corner positioning */}
             <button
               onClick={onClose}
               className="checkout-close-btn"
               style={{
                 position: "absolute",
-                top: 20,
-                right: 20,
-                background: theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
+                top: 16,
+                right: 16,
+                background: theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)",
                 border: "none",
                 borderRadius: "50%",
                 width: 32,
@@ -142,7 +142,9 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
               <X size={16} />
             </button>
 
-            <div className="checkout-grid">
+            {/* Inner Scrollable area */}
+            <div className="checkout-scroll-area" style={{ width: "100%", height: "100%" }}>
+              <div className="checkout-grid">
               {/* Left side — Product details */}
               <div
                 style={{
@@ -436,6 +438,7 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
                 </AnimatePresence>
               </div>
             </div>
+          </div>
           </motion.div>
         </div>
       )}
@@ -452,19 +455,29 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
           height: 160px;
           margin: 16px 0;
         }
+        .checkout-scroll-area {
+          overflow-y: visible;
+        }
         @media (max-width: 767px) {
           .checkout-modal-container {
             max-height: 90dvh !important;
-            overflow-y: auto !important;
+            overflow: hidden !important;
             border-radius: 24px !important;
             width: 95vw !important;
+            display: flex;
+            flex-direction: column;
+          }
+          .checkout-scroll-area {
+            overflow-y: auto !important;
+            flex: 1;
           }
           .checkout-close-btn {
-            position: fixed !important;
-            top: 24px !important;
-            right: 24px !important;
-            background: ${theme === "dark" ? "rgba(0,0,0,0.6) !important" : "rgba(255,255,255,0.8) !important"};
+            position: absolute !important;
+            top: 16px !important;
+            right: 16px !important;
+            background: ${theme === "dark" ? "rgba(0,0,0,0.5) !important" : "rgba(255,255,255,0.7) !important"};
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 100 !important;
           }
           .checkout-grid {
             grid-template-columns: 1fr !important;
@@ -475,7 +488,7 @@ export default function BuyModal({ isOpen, onClose, theme }: BuyModalProps) {
             padding: 32px 24px 16px !important;
           }
           .checkout-product-img-wrapper {
-            height: 120px !important;
+            height: 110px !important;
             margin: 8px 0 !important;
           }
           .checkout-form-side {
