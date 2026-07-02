@@ -7,32 +7,19 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 export default function HoverImageCursor() {
   const { theme } = useTheme();
   const [hoveredImage, setHoveredImage] = useState<string | null>(null);
-  const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
-    // Detect mobile small screens to protect PageSpeed score
-    const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkIsMobile();
-    window.addEventListener("resize", checkIsMobile);
-    return () => window.removeEventListener("resize", checkIsMobile);
-  }, []);
-
-  useEffect(() => {
-    if (isMobile) return;
-
-    // Track mouse coordinates using CSS custom variables to prevent React state lag
+    // Track mouse coordinates using CSS custom variables
     const handleMouseMove = (e: MouseEvent) => {
+      if (window.innerWidth < 768) return;
       document.documentElement.style.setProperty("--cursor-x", `${e.clientX}px`);
       document.documentElement.style.setProperty("--cursor-y", `${e.clientY}px`);
     };
 
     const handleMouseEnter = (e: MouseEvent) => {
+      if (window.innerWidth < 768) return;
       const img = e.currentTarget as HTMLImageElement;
       if (img && img.src) {
-        // Resolve absolute source url
         setHoveredImage(img.src);
       }
     };
@@ -64,10 +51,7 @@ export default function HoverImageCursor() {
         (el as HTMLElement).style.cursor = "";
       });
     };
-  }, [isMobile]);
-
-  // If mobile, do not render or add any DOM elements to protect PageSpeed score
-  if (isMobile) return null;
+  }, []);
 
   return (
     <AnimatePresence>
@@ -95,7 +79,6 @@ export default function HoverImageCursor() {
               borderRadius: "16px",
               pointerEvents: "none",
               zIndex: 99999,
-              // Leverage hardware acceleration via CSS variables
               transform: "translate3d(calc(var(--cursor-x, 0px) - 40px), calc(var(--cursor-y, 0px) - 40px), 0)",
               willChange: "transform",
               boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
