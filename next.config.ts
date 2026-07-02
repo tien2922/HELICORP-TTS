@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizeCss: true,
   },
+  turbopack: {},
   webpack: (config, { dev, isServer }) => {
     // Only strip polyfills for client-side production builds
     if (!dev && !isServer) {
